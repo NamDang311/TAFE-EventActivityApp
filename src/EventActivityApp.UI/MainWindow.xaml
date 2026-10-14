@@ -10,10 +10,6 @@
     Height="450"
     mc:Ignorable="d">
     <Grid>
-        <DockPanel>
-            <Label Background="Blue">Hi how asdsadssaasdsre yoasdsasdsadu</Label>
-            <TextBlock>Hello</TextBlock>
-            <TextBlock>Hello</TextBlock>
-        </DockPanel>
+        <Frame NavigationUIVisibility="Hidden" Source="Views/SearchPage.xaml" />
     </Grid>
 </Window>

@@ -24,21 +24,25 @@
                 <Style TargetType="{x:Type DockPanel}">
                     <Setter Property="Margin" Value="0,16,0,0" />
                 </Style>
+                <Style x:Key="FormLabelHoz" TargetType="{x:Type Label}">
+                    <Setter Property="Width" Value="120" />
+
+                </Style>
             </StackPanel.Resources>
             <DockPanel LastChildFill="True">
-                <Label>
+                <Label Style="{StaticResource FormLabelHoz}">
                     Date and Time
                 </Label>
-                <TextBox HorizontalAlignment="Stretch" />
+                <DatePicker HorizontalAlignment="Stretch" />
             </DockPanel>
             <DockPanel LastChildFill="True">
-                <Label>
+                <Label Style="{StaticResource FormLabelHoz}">
                     Title
                 </Label>
                 <TextBox />
             </DockPanel>
             <DockPanel LastChildFill="True">
-                <Label>
+                <Label Style="{StaticResource FormLabelHoz}">
                     Cost
                 </Label>
                 <TextBox />
@@ -46,8 +50,8 @@
             <TabControl Margin="0,16,0,0">
                 <TabItem Header="Fitness">
                     <DockPanel Margin="16" LastChildFill="True">
-                        <Label DockPanel.Dock="Top">Location</Label>
-                        <TextBox DockPanel.Dock="Top" />
+                        <Label DockPanel.Dock="Top" Margin="0,0,0,8">Location</Label>
+                        <TextBox DockPanel.Dock="Top" Margin="0,0,0,16"/>
                         <Button>Save Fitness Activity</Button>
                     </DockPanel>
                 </TabItem>
