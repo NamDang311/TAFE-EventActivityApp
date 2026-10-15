@@ -16,7 +16,7 @@ public class EventDetail
     public  string Title { get; set; }
     public decimal Cost { get; set { 
         if (value < 0) { throw new ArgumentException("Cost cannot be negative."); }
-            field = value;
+        field=value;
         } }
     public  string Location { get; set; }
 

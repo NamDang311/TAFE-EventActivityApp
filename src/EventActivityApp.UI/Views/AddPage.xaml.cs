@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using EventActivityApp.Persistent;
 
 namespace myapp.Views
 {
@@ -8,9 +9,11 @@ namespace myapp.Views
     /// </summary>
     public partial class AddPage : Page
     {
+        public EventCsvRepository _repo;
         public AddPage()
         {
             InitializeComponent();
+            _repo = new EventCsvRepository();
         }
 
         public void OnSaveFitnessClicked(object sender, RoutedEventArgs e)
@@ -26,6 +29,7 @@ namespace myapp.Views
                 var eventDetail = new EventActivityApp.Domain.EventDetail(date, title, cost, location);
                 // You can now save the eventDetail to your data store or perform other actions
                 MessageBox.Show($"Event saved: {eventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+               _repo.WriteCsv(eventDetail);
             }
             catch (ArgumentException ex)
             {
