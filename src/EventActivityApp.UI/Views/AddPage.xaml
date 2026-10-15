@@ -33,26 +33,26 @@
                 <Label Style="{StaticResource FormLabelHoz}">
                     Date and Time
                 </Label>
-                <DatePicker HorizontalAlignment="Stretch" />
+                <DatePicker HorizontalAlignment="Stretch" x:Name="DateTextBox" />
             </DockPanel>
             <DockPanel LastChildFill="True">
                 <Label Style="{StaticResource FormLabelHoz}">
                     Title
                 </Label>
-                <TextBox />
+                <TextBox x:Name="TitleTextBox" />
             </DockPanel>
             <DockPanel LastChildFill="True">
                 <Label Style="{StaticResource FormLabelHoz}">
                     Cost
                 </Label>
-                <TextBox />
+                <TextBox x:Name="CostTextBox" />
             </DockPanel>
             <TabControl Margin="0,16,0,0">
                 <TabItem Header="Fitness">
                     <DockPanel Margin="16" LastChildFill="True">
                         <Label DockPanel.Dock="Top" Margin="0,0,0,8">Location</Label>
-                        <TextBox DockPanel.Dock="Top" Margin="0,0,0,16"/>
-                        <Button>Save Fitness Activity</Button>
+                        <TextBox DockPanel.Dock="Top" Margin="0,0,0,16" x:Name="LocationTextBox"/>
+                        <Button Click="OnSaveFitnessClicked">Save Fitness Activity</Button>
                     </DockPanel>
                 </TabItem>
                 <TabItem Header="Entertainment" />

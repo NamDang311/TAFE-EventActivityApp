@@ -10,6 +10,6 @@
     Height="450"
     mc:Ignorable="d">
     <Grid>
-        <Frame NavigationUIVisibility="Hidden" Source="Views/SearchPage.xaml" />
+        <Frame Source="Views/AddPage.xaml" />
     </Grid>
 </Window>
