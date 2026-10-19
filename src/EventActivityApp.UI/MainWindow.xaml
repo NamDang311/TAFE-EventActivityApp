@@ -10,6 +10,6 @@
     Height="450"
     mc:Ignorable="d">
     <Grid>
-        <Frame Source="Views/AddPage.xaml" />
+        <Frame Source="Views/Home.xaml" />
     </Grid>
 </Window>
