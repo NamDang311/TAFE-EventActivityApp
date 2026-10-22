@@ -22,5 +22,14 @@ namespace EventActivityApp.UI.Views
         {
             InitializeComponent();
         }
+
+        public void OnAddActivityClicked(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new Uri("Views/AddPage.xaml", UriKind.Relative));
+        }
+        public void OnSearchActivitiesClicked(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new Uri("Views/SearchPage.xaml", UriKind.Relative));
+        }
     }
 }

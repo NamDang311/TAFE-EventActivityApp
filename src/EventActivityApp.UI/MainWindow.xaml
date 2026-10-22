@@ -10,6 +10,6 @@
     Height="450"
     mc:Ignorable="d">
     <Grid>
-        <Frame Source="Views/Home.xaml" />
+        <Frame NavigationUIVisibility="Automatic" Source="Views/Home.xaml" />
     </Grid>
 </Window>

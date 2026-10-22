@@ -3,4 +3,7 @@
     <Project Path="src/EventActivityApp.UI/EventActivityApp.UI.csproj" />
     <Project Path="src/EventActivityApp/EventActivityApp.csproj" />
   </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/EventActivityApp.Tests/EventActivityApp.Tests.csproj" />
+  </Folder>
 </Solution>

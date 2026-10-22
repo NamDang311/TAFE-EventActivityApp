@@ -13,8 +13,8 @@
             <TextBlock Text="Welcome to the Event Activity App!" FontSize="24" FontWeight="Bold" Margin="16,40,16,16"/>
             <TextBlock Text="This application allows you to manage and track events and activities." FontSize="16" Margin="16"/>
             <StackPanel Orientation="Horizontal">
-                <Button  Margin="16,0,16,0">Search Activities</Button>
-                <Button>Add Activity</Button>
+                <Button Click="OnSearchActivitiesClicked" Margin="16,0,16,0">Search Activities</Button>
+                <Button Click="OnAddActivityClicked">Add Activity</Button>
             </StackPanel>
         </StackPanel>
     </Grid>

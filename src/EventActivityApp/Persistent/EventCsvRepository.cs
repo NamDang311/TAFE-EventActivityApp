@@ -1,5 +1,7 @@
 using CsvHelper;
 using CsvHelper.Configuration;
+using EventActivityApp.Domain;
+using Microsoft.VisualBasic;
 using System;
 using System.Diagnostics;
 using System.Dynamic;
@@ -9,14 +11,56 @@ namespace EventActivityApp.Persistent;
 
 public class EventCsvRepository
 {
-    public readonly string _filePath = Path.Combine(GetPathToProjectFolder("Data"), "EntertainmentActivities.CSV");
-   
-    public void SaveEvent(EventActivityApp.Domain.EventDetail eventDetail)
+    public string _fileName = "FitnessActivities.CSV";
+    public string _filePath => Path.Combine(GetPathToProjectFolder("Data"), _fileName);
+
+    public void SetEvent(string type)
     {
-        WriteCsv(eventDetail);
+        if (type == "fitness")
+        {
+            _fileName = "FitnessActivities.CSV";
+        }
+        else if (type == "entertainment")
+        {
+            _fileName = "EntertainmentActivities.CSV";
+        }
+        else
+        {
+            new ArgumentException("Invalid event type");
+        }
     }
-    public void WriteCsv(EventActivityApp.Domain.EventDetail record) {
-       
+
+    public List<EventDetail> ReadCsv()
+    {
+        var results = new List<EventDetail>();
+        results.AddRange(ReadFile<FitnessEvent>("FitnessActivities.CSV"));
+        results.AddRange(ReadFile<EntertainmentEvent>("EntertainmentActivities.CSV"));
+        return results;
+    }
+
+    private List<T> ReadFile<T>(string fileName) where T : EventDetail
+    {
+        string path = Path.Combine(GetPathToProjectFolder("Data"), fileName);
+        if (!File.Exists(path))
+        {
+            return new List<T>();
+        }
+
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            PrepareHeaderForMatch = args => args.Header.ToLower(),
+        };
+        using (var reader = new StreamReader(path))
+        using (var csv = new CsvReader(reader, config))
+        {
+
+            return csv.GetRecords<T>().ToList();
+        }
+    }
+
+    public void WriteCsv<T>(T record) where T : EventDetail
+    {
+
         using (var stream = File.Open(_filePath, FileMode.Append))
         using (var writer = new StreamWriter(stream))
         {
@@ -27,13 +71,16 @@ public class EventCsvRepository
             };
             using (var csv = new CsvWriter(writer, config))
             {
+                csv.Context.RegisterClassMap<FitnessEventMap>();
+                csv.Context.RegisterClassMap<EntertainmentEventMap>();
                 csv.WriteRecord(record);
                 csv.NextRecord();
             }
         }
         ;
-            
-        }
+
+    }
+
     private static string GetPathToProjectFolder(string folderName)
     {
         // Get the base directory for the project.  This defaults to where the compiled code is

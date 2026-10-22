@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EventActivityApp.UI</name>
+    </assembly>
+    <members>
+        <member name="T:EventActivityApp.UI.App">
+            <summary>
+            Interaction logic for App.xaml
+            </summary>
+            <summary>
+            App
+            </summary>
+        </member>
+        <member name="M:EventActivityApp.UI.App.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="M:EventActivityApp.UI.App.Main">
+            <summary>
+            Application Entry Point.
+            </summary>
+        </member>
+        <member name="T:EventActivityApp.UI.MainWindow">
+            <summary>
+            Interaction logic for MainWindow.xaml
+            </summary>
+            <summary>
+            MainWindow
+            </summary>
+        </member>
+        <member name="M:EventActivityApp.UI.MainWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:EventActivityApp.UI.Views.AddPage">
+            <summary>
+            Interaction logic for AddPage.xaml
+            </summary>
+            <summary>
+            AddPage
+            </summary>
+        </member>
+        <member name="M:EventActivityApp.UI.Views.AddPage.OnSaveFitnessClicked(System.Object,System.Windows.RoutedEventArgs)">
+            <summary>
+            Validates input, saves the fitness event, and displays the result.
+            </summary>
+            <param name="sender">The source of the event.</param>
+            <param name="e">The event data.</param>
+        </member>
+        <member name="M:EventActivityApp.UI.Views.AddPage.OnSaveEntertainmentClicked(System.Object,System.Windows.RoutedEventArgs)">
+            <summary>
+            Validates input, saves the entertainment event, and displays the result.
+            </summary>
+            <param name="sender">The source of the event.</param>
+            <param name="e">The event data.</param>
+        </member>
+        <member name="M:EventActivityApp.UI.Views.AddPage.ValidateTextInput(System.String)">
+            <summary>
+            Validates the text input in the form and builds the event field values.
+            </summary>
+            <param name="type">The type of event being validated ("Fitness" or "Entertainment").</param>
+            <returns>The validated field values, or <see langword="null"/> when validation fails.</returns>
+        </member>
+        <member name="M:EventActivityApp.UI.Views.AddPage.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:EventActivityApp.UI.Views.Home">
+            <summary>
+            Interaction logic for Home.xaml
+            </summary>
+            <summary>
+            Home
+            </summary>
+        </member>
+        <member name="M:EventActivityApp.UI.Views.Home.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:myapp.Views.SearchPage">
+            <summary>
+            Interaction logic for SearchPage.xaml
+            </summary>
+            <summary>
+            SearchPage
+            </summary>
+        </member>
+        <member name="M:myapp.Views.SearchPage.SearchActivitiesClicked(System.Object,System.Windows.RoutedEventArgs)">
+            <summary>
+            Loads event details from the CSV repository and displays them in the activity table.
+            </summary>
+            <remarks>Displays an error message when an <see cref="T:System.ArgumentException"/> occurs.</remarks>
+            <param name="sender">The object that raised the event.</param>
+            <param name="e">The routed event data.</param>
+        </member>
+        <member name="M:myapp.Views.SearchPage.OnDisplayAllClicked(System.Object,System.Windows.RoutedEventArgs)">
+            <summary>
+            Displays all event details read from the CSV file.
+            </summary>
+            <param name="sender">The source of the routed event.</param>
+            <param name="e">The event data.</param>
+        </member>
+        <member name="M:myapp.Views.SearchPage.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+    </members>
+</doc>
