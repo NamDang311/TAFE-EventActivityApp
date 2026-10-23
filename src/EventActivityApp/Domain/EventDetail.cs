@@ -64,6 +64,12 @@ public class EntertainmentEvent : EventDetail
     }
 }
 
+
+
+/* 
+Map the property to fix the order when writting csv. 
+CSVHelper: For a derived class, reflection usually lists the subclass's own properties before the inherited ones. 
+*/
 public sealed class FitnessEventMap : ClassMap<FitnessEvent>
 {
     public FitnessEventMap()

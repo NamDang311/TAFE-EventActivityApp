@@ -26,7 +26,7 @@ public class EventCsvRepository
         }
         else
         {
-            new ArgumentException("Invalid event type");
+            throw new ArgumentException("Invalid event type");
         }
     }
 
@@ -38,12 +38,18 @@ public class EventCsvRepository
         return results;
     }
 
+    /// <summary>
+    /// Reads all records from a CSV file in the Data folder and maps each row to an event of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The event type to create for each row (for example, <see cref="FitnessEvent"/> or <see cref="EntertainmentEvent"/>).</typeparam>
+    /// <param name="fileName">The name of the CSV file to read, such as "FitnessActivities.CSV".</param>
+    /// <returns>A list of the events read from the file.</returns>
     private List<T> ReadFile<T>(string fileName) where T : EventDetail
     {
         string path = Path.Combine(GetPathToProjectFolder("Data"), fileName);
         if (!File.Exists(path))
         {
-            return new List<T>();
+            throw new FileNotFoundException($"File not found at {path}");
         }
 
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
