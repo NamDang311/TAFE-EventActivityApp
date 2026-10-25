@@ -7,20 +7,38 @@
     <Application.Resources>
         <Style TargetType="{x:Type Label}">
             <Setter Property="Padding" Value="0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
-        <Style TargetType="{x:Type DatePicker}">
+
+        <Style TargetType="{x:Type DatePicker}"> 
+            <Style.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="3" />
+                </Style>
+            </Style.Resources>
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="Height" Value="32" />
             <Setter Property="Padding" Value="4,0,0,0" />
         </Style>
-        <Style TargetType="{x:Type TextBox}">
-			<Setter Property="VerticalContentAlignment" Value="Center" />
-			<Setter Property="Height" Value="32" />
-            <Setter Property="Padding" Value="4,0,0,0" />
-		</Style>
-		<Style x:Key="FormLabelHoz" TargetType="{x:Type Label}">
-			<Setter Property="Width" Value="120" />
 
-		</Style>
+        <Style TargetType="{x:Type TextBox}">
+            <Style.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="3" />
+                    
+                </Style>
+            </Style.Resources>
+            <Setter Property="BorderBrush" Value="#CFD8DC" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Padding" Value="4,0,0,0" />
+            <Setter Property="Background" Value="#ECEFF1" />
+        </Style>
+
+
+        <Style x:Key="FormLabelHoz" TargetType="{x:Type Label}">
+            <Setter Property="Width" Value="80" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
     </Application.Resources>
 </Application>

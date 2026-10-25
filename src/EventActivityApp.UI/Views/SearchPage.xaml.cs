@@ -28,7 +28,7 @@ namespace myapp.Views
         /// <param name="e">The routed event data.</param>
         public void SearchActivitiesClicked(object sender, RoutedEventArgs e)
         {
-            // Check if Search Date is empty
+            // Check if Search Date field is empty
             if (SearchDatePicker.SelectedDate == null)
             {
                 MessageBox.Show("Please select a date.", "Date Required", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -64,9 +64,9 @@ namespace myapp.Views
                 Debug.WriteLine(results);
                 ActivityTable.ItemsSource = results;
 
-           
 
-                
+
+
 
             }
             catch (ArgumentException ex)

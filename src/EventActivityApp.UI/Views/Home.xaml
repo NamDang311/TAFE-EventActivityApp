@@ -13,13 +13,13 @@
     <Grid Background="White">
         <StackPanel>
             <TextBlock
-                Margin="16,40,16,16"
+                Margin="16,40,16,8"
                 FontSize="15"
                 FontWeight="Bold"
                 Text="Elevate Horizon Connect "
                 Typography.Capitals="AllSmallCaps" />
             <TextBlock
-                Margin="16,4,16,16"
+                Margin="16,0,16,0"
                 FontSize="24"
                 FontWeight="Bold"
                 Text="Find and plan your next activity" />

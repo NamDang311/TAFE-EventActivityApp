@@ -56,7 +56,6 @@ namespace EventActivityApp.UI.Views
         /// <param name="e">The event data.</param>
         public void OnSaveEntertainmentClicked(object sender, RoutedEventArgs e)
         {
-            // Handle the save fitness logic here
             var values = ValidateTextInput("Entertainment");
             if (values is null)
             {

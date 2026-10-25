@@ -11,9 +11,11 @@ namespace EventActivityApp.Persistent;
 
 public class EventCsvRepository
 {
+    public string DataFolder { get; set; } = GetPathToProjectFolder("Data");
     public string _fileName = "FitnessActivities.CSV";
-    public string _filePath => Path.Combine(GetPathToProjectFolder("Data"), _fileName);
+    public string _filePath => Path.Combine(DataFolder, _fileName);
 
+    // To map the correct event type.
     public void SetEvent(string type)
     {
         if (type == "fitness")
@@ -46,7 +48,7 @@ public class EventCsvRepository
     /// <returns>A list of the events read from the file.</returns>
     private List<T> ReadFile<T>(string fileName) where T : EventDetail
     {
-        string path = Path.Combine(GetPathToProjectFolder("Data"), fileName);
+        string path = Path.Combine(DataFolder, fileName);
         if (!File.Exists(path))
         {
             throw new FileNotFoundException($"File not found at {path}");
@@ -87,6 +89,12 @@ public class EventCsvRepository
 
     }
 
+
+    /// <summary>
+    /// Ultils to get path to csv files
+    /// </summary>
+    /// <param name="folderName"></param>
+    /// <returns></returns>
     private static string GetPathToProjectFolder(string folderName)
     {
         // Get the base directory for the project.  This defaults to where the compiled code is
