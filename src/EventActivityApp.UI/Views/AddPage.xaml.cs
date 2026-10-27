@@ -39,8 +39,7 @@ namespace EventActivityApp.UI.Views
             {
                 var eventDetail = new EventActivityApp.Domain.FitnessEvent($"{values[0]} {values[1]}", (string)values[2], (decimal)values[3], (string)values[4]);
                 // Write to csv
-                _repo.CurrentType = EventType.fitness;
-                _repo.WriteCsv(eventDetail);
+                _repo.WriteCsv(eventDetail, EventType.fitness);
                 MessageBox.Show($"Event saved:\n" +
                     $"{eventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -68,8 +67,7 @@ namespace EventActivityApp.UI.Views
             {
                 var eventDetail = new EventActivityApp.Domain.EntertainmentEvent($"{values[0]} {values[1]}", (string)values[2], (decimal)values[3], (int)values[4]);
                 // Write to csv
-                _repo.CurrentType = EventType.entertainment;
-                _repo.WriteCsv(eventDetail);
+                _repo.WriteCsv(eventDetail, EventType.entertainment);
                 MessageBox.Show($"Event saved:\n" +
                     $"{eventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -95,17 +93,17 @@ namespace EventActivityApp.UI.Views
                 return null;
             }
             DateTime dateValue = DateTextBox.SelectedDate.Value;
-            string date = dateValue.ToString("dd/MM/yyyy");
+            string date = dateValue.ToString("d/MM/yyyy");
 
             // Validate time picker if empty or not in correct format
-            if (!TimeSpan.TryParseExact(TimeTextBox.Text.Trim(), @"hh\:mm", CultureInfo.InvariantCulture, out TimeSpan parsed))
+            if (!TimeSpan.TryParseExact(TimeTextBox.Text.Trim(), @"h\:mm", CultureInfo.InvariantCulture, out TimeSpan parsed))
             {
-                MessageBox.Show("Please enter a time in HH:mm format (e.g. 14:30).", "Time Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Please enter a time in h:mm format (e.g. 7:30).", "Time Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 TimeTextBox.Focus();
                 return null;
             }
 
-            string time = parsed.ToString(@"hh\:mm");
+            string time = parsed.ToString(@"h\:mm");
 
             // Validate title if empty
             if (string.IsNullOrWhiteSpace(TitleTextBox.Text))

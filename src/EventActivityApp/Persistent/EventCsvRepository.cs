@@ -24,7 +24,7 @@ public enum SearchFilter
 
 public class EventCsvRepository
 {
-    public EventType CurrentType { get; set; }
+    // public EventType CurrentType { get; set; }
     private string GetFileName(EventType type) => type switch
     {
         EventType.fitness => "FitnessActivities.CSV",
@@ -34,21 +34,22 @@ public class EventCsvRepository
 
     public string DataFolder { get; set; } = GetPathToProjectFolder("Data");
 
-    public string _filePath => Path.Combine(DataFolder, GetFileName(CurrentType));
+    public string _filePath = "";
 
     /// <summary>
     /// Reads event details from CSV files based on the specified event type.
     /// </summary>
     /// <param name="type">The event type to filter by. Supported values are "fitness", "entertainment", or null for all types.</param>
     /// <returns>A list of event details read from the corresponding CSV files.</returns>
-    public List<EventDetail> ReadCsv()
+    public List<EventDetail> ReadCsv(EventType type)
     {
+        _filePath = Path.Combine(DataFolder, GetFileName(type));
         var results = new List<EventDetail>();
-        if (CurrentType is EventType.fitness)
+        if (type is EventType.fitness)
         {
             results.AddRange(ReadFile<FitnessEvent>("FitnessActivities.CSV"));
         }
-        else if (CurrentType is EventType.entertainment)
+        else if (type is EventType.entertainment)
         {
             results.AddRange(ReadFile<EntertainmentEvent>("EntertainmentActivities.CSV"));
         }
@@ -59,7 +60,7 @@ public class EventCsvRepository
         return results;
     }
 
-    private List<EventDetail> ReadAllCsv()
+    public List<EventDetail> ReadAllCsv()
     {
         var results = new List<EventDetail>();
         results.AddRange(ReadFile<FitnessEvent>("FitnessActivities.CSV"));
@@ -93,9 +94,9 @@ public class EventCsvRepository
         }
     }
 
-    public void WriteCsv<T>(T record) where T : EventDetail
+    public void WriteCsv<T>(T record, EventType type) where T : EventDetail
     {
-
+        _filePath = Path.Combine(DataFolder, GetFileName(type));
         using (var stream = File.Open(_filePath, FileMode.Append))
         using (var writer = new StreamWriter(stream))
         {

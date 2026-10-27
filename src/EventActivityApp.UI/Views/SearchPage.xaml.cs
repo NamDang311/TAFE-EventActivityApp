@@ -40,7 +40,7 @@ namespace myapp.Views
             try
             {
                 var results = new List<EventDetail>();
-                foreach (var item in _repo.ReadCsv())
+                foreach (var item in _repo.ReadAllCsv())
                 {
                     DateTime eventDate = DateTime.ParseExact(item.DateStartTime, "d/MM/yyyy H:mm", CultureInfo.InvariantCulture).Date;
                     if (DateFilterRadioBefore.IsChecked == true && eventDate < searchDate)
@@ -99,12 +99,8 @@ namespace myapp.Views
         {
             try
             {
-                List<EventDetail> results = _repo.ReadCsv();
+                List<EventDetail> results = _repo.ReadAllCsv();
                 ActivityTable.ItemsSource = results;
-                foreach (var item in results)
-                {
-                    Debug.WriteLine($"Event {item}");
-                }
             }
             catch (ArgumentException ex)
             {

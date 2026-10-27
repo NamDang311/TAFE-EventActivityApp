@@ -30,34 +30,34 @@ public class EventCsvRepositoryTest
     [Fact]
     private void FitnessMockFile_ShouldExist()
     {
-        _repo.CurrentType = EventType.fitness;
+        string path = Path.Combine(_repo.DataFolder, "FitnessActivities.CSV");
         Assert.True(File.Exists(_repo._filePath));
     }
 
     [Fact]
     private void EntertainmentMockFile_ShouldExist()
     {
-        _repo.CurrentType = EventType.entertainment;
+        string path = Path.Combine(_repo.DataFolder, "EntertainmentActivities.CSV");
         Assert.True(File.Exists(_repo._filePath));
 
     }
 
     [Fact]
-    private void FilesMissing_ThrowsFileNotFound()
+    public void FilesMissing_ThrowsFileNotFound()
     {
-        string fitnessContent = File.ReadAllText(_repo._filePath);
+        string path = Path.Combine(_repo.DataFolder, "FitnessActivities.CSV");
+        string fitnessContent = File.ReadAllText(path);
         try
         {
-
-            File.Delete(_repo._filePath);
-            Assert.Throws<FileNotFoundException>(() => _repo.ReadCsv());
+            File.Delete(path);
+            Assert.Throws<FileNotFoundException>(() => _repo.ReadCsv(EventType.fitness));
         }
         finally
         {
-            File.WriteAllText(_repo._filePath, fitnessContent);
+            File.WriteAllText(path, fitnessContent);
         }
-
     }
+
 
 
     [Fact]
