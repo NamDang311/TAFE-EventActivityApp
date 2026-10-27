@@ -25,8 +25,9 @@ namespace EventActivityApp.UI.Views
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        public void OnSaveFitnessClicked(object sender, RoutedEventArgs e)
+        private void OnSaveFitnessClicked(object sender, RoutedEventArgs e)
         {
+            // Run a validation on the form inputs
             var values = ValidateTextInput("Fitness");
             if (values is null)
             {
@@ -38,7 +39,7 @@ namespace EventActivityApp.UI.Views
             {
                 var eventDetail = new EventActivityApp.Domain.FitnessEvent($"{values[0]} {values[1]}", (string)values[2], (decimal)values[3], (string)values[4]);
                 // Write to csv
-                _repo.SetEvent("fitness");
+                _repo.CurrentType = EventType.fitness;
                 _repo.WriteCsv(eventDetail);
                 MessageBox.Show($"Event saved:\n" +
                     $"{eventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -54,8 +55,9 @@ namespace EventActivityApp.UI.Views
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        public void OnSaveEntertainmentClicked(object sender, RoutedEventArgs e)
+        private void OnSaveEntertainmentClicked(object sender, RoutedEventArgs e)
         {
+            // Run a validation on the form inputs
             var values = ValidateTextInput("Entertainment");
             if (values is null)
             {
@@ -66,7 +68,7 @@ namespace EventActivityApp.UI.Views
             {
                 var eventDetail = new EventActivityApp.Domain.EntertainmentEvent($"{values[0]} {values[1]}", (string)values[2], (decimal)values[3], (int)values[4]);
                 // Write to csv
-                _repo.SetEvent("entertainment");
+                _repo.CurrentType = EventType.entertainment;
                 _repo.WriteCsv(eventDetail);
                 MessageBox.Show($"Event saved:\n" +
                     $"{eventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -83,7 +85,7 @@ namespace EventActivityApp.UI.Views
         /// </summary>
         /// <param name="type">The type of event being validated ("Fitness" or "Entertainment").</param>
         /// <returns>The validated field values, or <see langword="null"/> when validation fails.</returns>
-        public List<object>? ValidateTextInput(string type)
+        private List<object>? ValidateTextInput(string type)
         {
             // Validate date picker if empty
             if (DateTextBox.SelectedDate == null)

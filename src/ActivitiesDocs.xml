@@ -77,20 +77,6 @@
             Home
             </summary>
         </member>
-        <member name="M:EventActivityApp.UI.Views.Home.OnAddActivityClicked(System.Object,System.Windows.RoutedEventArgs)">
-            <summary>
-            Handles the click event to navigate to the AddPage page.
-            </summary>
-            <param name="sender">The source of the event.</param>
-            <param name="e">The event data.</param>
-        </member>
-        <member name="M:EventActivityApp.UI.Views.Home.OnSearchActivitiesClicked(System.Object,System.Windows.RoutedEventArgs)">
-            <summary>
-            Handles the click event to navigate to the Search activities page.
-            </summary>
-            <param name="sender">The source of the event.</param>
-            <param name="e">The event data.</param>
-        </member>
         <member name="M:EventActivityApp.UI.Views.Home.InitializeComponent">
             <summary>
             InitializeComponent

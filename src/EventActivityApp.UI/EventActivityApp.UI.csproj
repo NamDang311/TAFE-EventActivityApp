@@ -15,4 +15,8 @@
 	
   </PropertyGroup>
 
+  <ItemGroup>
+    <Resource Include="Images\**\*" />
+  </ItemGroup>
+
 </Project>

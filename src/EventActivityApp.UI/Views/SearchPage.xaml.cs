@@ -26,7 +26,7 @@ namespace myapp.Views
         /// <remarks>Displays an error message when an <see cref="ArgumentException"/> occurs.</remarks>
         /// <param name="sender">The object that raised the event.</param>
         /// <param name="e">The routed event data.</param>
-        public void SearchActivitiesClicked(object sender, RoutedEventArgs e)
+        private void SearchActivitiesClicked(object sender, RoutedEventArgs e)
         {
             // Check if Search Date field is empty
             if (SearchDatePicker.SelectedDate == null)
@@ -44,7 +44,9 @@ namespace myapp.Views
                 {
                     DateTime eventDate = DateTime.ParseExact(item.DateStartTime, "d/MM/yyyy H:mm", CultureInfo.InvariantCulture).Date;
                     if (DateFilterRadioBefore.IsChecked == true && eventDate < searchDate)
-                    { results.Add(item); }
+                    {
+                        results.Add(item);
+                    }
                     else if (DateFilterRadioOn.IsChecked == true && eventDate == searchDate)
                     {
                         results.Add(item);
@@ -93,7 +95,7 @@ namespace myapp.Views
         /// </summary>
         /// <param name="sender">The source of the routed event.</param>
         /// <param name="e">The event data.</param>
-        public void OnDisplayAllClicked(object sender, RoutedEventArgs e)
+        private void OnDisplayAllClicked(object sender, RoutedEventArgs e)
         {
             try
             {

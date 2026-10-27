@@ -18,28 +18,19 @@ namespace EventActivityApp.UI.Views
     /// </summary>
     public partial class Home : Page
     {
-        
+
         public Home()
         {
             InitializeComponent();
         }
 
-        /// <summary>
-        /// Handles the click event to navigate to the AddPage page.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
-        public void OnAddActivityClicked(object sender, RoutedEventArgs e)
+        private void OnAddActivityClicked(object sender, RoutedEventArgs e)
         {
             NavigationService?.Navigate(new Uri("Views/AddPage.xaml", UriKind.Relative));
         }
 
-        /// <summary>
-        /// Handles the click event to navigate to the Search activities page.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
-        public void OnSearchActivitiesClicked(object sender, RoutedEventArgs e)
+
+        private void OnSearchActivitiesClicked(object sender, RoutedEventArgs e)
         {
             NavigationService?.Navigate(new Uri("Views/SearchPage.xaml", UriKind.Relative));
         }

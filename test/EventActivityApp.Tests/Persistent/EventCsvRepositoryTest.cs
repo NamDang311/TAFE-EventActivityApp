@@ -15,74 +15,85 @@ namespace EventActivityApp.Persistent;
 
 public class EventCsvRepositoryTest
 {
-    private readonly ITestOutputHelper _output;
-
     private readonly string baseDir = AppDomain.CurrentDomain.BaseDirectory;
     private readonly EventCsvRepository _repo;
-    private readonly string _fitnessTestFilePath;
-    private readonly string _entertainmentTestFilePath;
 
-    public EventCsvRepositoryTest(ITestOutputHelper output)
+    public EventCsvRepositoryTest()
     {
-        _output = output;
         _repo = new EventCsvRepository
         {
             DataFolder = Path.Combine(
                 baseDir, "..", "..", "..", "Data")
         };
-        _fitnessTestFilePath = Path.Combine(_repo.DataFolder, "FitnessActivities.CSV");
-        _entertainmentTestFilePath = Path.Combine(_repo.DataFolder, "EntertainmentActivities.CSV");
     }
 
     [Fact]
-    public void FitnessProdFile_ShouldExist()
+    private void FitnessMockFile_ShouldExist()
     {
-        var filePath = Path.Combine(baseDir, "..", "..", "..", "..", "..", "src", "EventActivityApp", "Data", "FitnessActivities.CSV");
-        Assert.True(File.Exists(filePath));
+        _repo.CurrentType = EventType.fitness;
+        Assert.True(File.Exists(_repo._filePath));
+    }
+
+    [Fact]
+    private void EntertainmentMockFile_ShouldExist()
+    {
+        _repo.CurrentType = EventType.entertainment;
+        Assert.True(File.Exists(_repo._filePath));
 
     }
 
     [Fact]
-    public void EntertainmentProdFile_ShouldExist()
+    private void FilesMissing_ThrowsFileNotFound()
     {
-
-        var filePath = Path.Combine(baseDir, "..", "..", "..", "..", "..", "src", "EventActivityApp", "Data", "EntertainmentActivities.CSV");
-        Assert.True(File.Exists(filePath));
-
-    }
-
-    // NOTE: The belows will point to Mock Data folder.
-    [Fact]
-    public void FilesMissing_ThrowsFileNotFound()
-    {
-        string fitnessContent = File.ReadAllText(_fitnessTestFilePath);
+        string fitnessContent = File.ReadAllText(_repo._filePath);
         try
         {
 
-            File.Delete(_fitnessTestFilePath);
+            File.Delete(_repo._filePath);
             Assert.Throws<FileNotFoundException>(() => _repo.ReadCsv());
         }
         finally
         {
-            File.WriteAllText(_fitnessTestFilePath, fitnessContent);
+            File.WriteAllText(_repo._filePath, fitnessContent);
         }
 
     }
 
-    [Fact]
-    public void CanSaveFitnessEvent_ShouldWriteToFile()
-    {
 
-        string original = File.ReadAllText(_fitnessTestFilePath);
+    [Fact]
+    private void CanReadFitnessEvents_ShouldReturnList()
+    {
+        _repo.CurrentType = EventType.fitness;
+        var list = _repo.ReadCsv();
+        Assert.Equal("FitnessActivities.CSV", Path.GetFileName(_repo._filePath));
+        Assert.NotEmpty(list);
+        Assert.IsType<List<EventDetail>>(list);
+
+    }
+
+    [Fact]
+    private void CanReadEntertainmentEvents_ShouldReturnList()
+    {
+        _repo.CurrentType = EventType.entertainment;
+        var list = _repo.ReadCsv();
+        Assert.Equal("EntertainmentActivities.CSV", Path.GetFileName(_repo._filePath));
+        Assert.NotEmpty(list);
+        Assert.IsType<List<EventDetail>>(list);
+    }
+
+    [Fact]
+    private void CanSaveFitnessEvent_ShouldWriteToFile()
+    {
+        _repo.CurrentType = EventType.fitness;
+        string original = File.ReadAllText(_repo._filePath);
         var event1 = new EventActivityApp.Domain.FitnessEvent("28/10/2026", "Swimming", 3, "Liverpool Center");
-        _repo.SetEvent("fitness");
         string[] lastLine;
 
         try
         {
 
             _repo.WriteCsv(event1);
-            lastLine = File.ReadAllLines(_fitnessTestFilePath);
+            lastLine = File.ReadAllLines(_repo._filePath);
             Assert.Equal(
                 "28/10/2026,Swimming,3,Liverpool Center", lastLine[^1]);
 
@@ -90,23 +101,22 @@ public class EventCsvRepositoryTest
 
         finally
         {
-            File.WriteAllText(_fitnessTestFilePath, original);
+            File.WriteAllText(_repo._filePath, original);
         }
     }
 
     [Fact]
     public void CanSaveEntertainmentEvent_ShouldWriteToFile()
     {
-
-        string original = File.ReadAllText(_entertainmentTestFilePath);
+        _repo.CurrentType = EventType.entertainment;
+        string original = File.ReadAllText(_repo._filePath);
         var event1 = new EventActivityApp.Domain.EntertainmentEvent("28/10/2026", "Chess", 3, 1);
-        _repo.SetEvent("entertainment");
         string[] lastLine;
 
         try
         {
             _repo.WriteCsv(event1);
-            lastLine = File.ReadAllLines(_entertainmentTestFilePath);
+            lastLine = File.ReadAllLines(_repo._filePath);
             Assert.Equal(
                 "28/10/2026,Chess,3,1", lastLine[^1]);
 
@@ -114,8 +124,26 @@ public class EventCsvRepositoryTest
 
         finally
         {
-            File.WriteAllText(_entertainmentTestFilePath, original);
+            File.WriteAllText(_repo._filePath, original);
         }
+    }
+
+    [Theory]
+    [InlineData(SearchFilter.before, "Running")]
+    [InlineData(SearchFilter.on, "Yoga")]
+    [InlineData(SearchFilter.after, "Swimming")]
+    public void SearchEvent_ReturnsEventsMatchingFilter(SearchFilter filter, string expectedTitle)
+    {
+        var data = new List<EventDetail>
+    {
+        new FitnessEvent("29/10/2026 9:00", "Running", 0, "Sydney Park"),
+        new FitnessEvent("30/10/2026 6:23", "Yoga", 12, "Mt Pritchard"),
+        new FitnessEvent("31/10/2026 8:00", "Swimming", 10, "Bondi Beach"),
+    };
+
+        var results = _repo.SearchEvent(new DateTime(2026, 10, 30), filter, data);
+
+        Assert.Equal(expectedTitle, Assert.Single(results).Title);
     }
 }
 

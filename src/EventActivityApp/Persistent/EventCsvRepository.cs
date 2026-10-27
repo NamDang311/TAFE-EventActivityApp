@@ -6,33 +6,60 @@ using System;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Globalization;
-
 namespace EventActivityApp.Persistent;
+
+
+public enum EventType
+{
+    none,
+    fitness,
+    entertainment,
+}
+
+public enum SearchFilter
+{
+    before, on, after
+}
+
 
 public class EventCsvRepository
 {
-    public string DataFolder { get; set; } = GetPathToProjectFolder("Data");
-    public string _fileName = "FitnessActivities.CSV";
-    public string _filePath => Path.Combine(DataFolder, _fileName);
-
-    // To map the correct event type.
-    public void SetEvent(string type)
+    public EventType CurrentType { get; set; }
+    private string GetFileName(EventType type) => type switch
     {
-        if (type == "fitness")
+        EventType.fitness => "FitnessActivities.CSV",
+        EventType.entertainment => "EntertainmentActivities.CSV",
+        _ => throw new InvalidOperationException("Set correct event type")
+    };
+
+    public string DataFolder { get; set; } = GetPathToProjectFolder("Data");
+
+    public string _filePath => Path.Combine(DataFolder, GetFileName(CurrentType));
+
+    /// <summary>
+    /// Reads event details from CSV files based on the specified event type.
+    /// </summary>
+    /// <param name="type">The event type to filter by. Supported values are "fitness", "entertainment", or null for all types.</param>
+    /// <returns>A list of event details read from the corresponding CSV files.</returns>
+    public List<EventDetail> ReadCsv()
+    {
+        var results = new List<EventDetail>();
+        if (CurrentType is EventType.fitness)
         {
-            _fileName = "FitnessActivities.CSV";
+            results.AddRange(ReadFile<FitnessEvent>("FitnessActivities.CSV"));
         }
-        else if (type == "entertainment")
+        else if (CurrentType is EventType.entertainment)
         {
-            _fileName = "EntertainmentActivities.CSV";
+            results.AddRange(ReadFile<EntertainmentEvent>("EntertainmentActivities.CSV"));
         }
         else
         {
-            throw new ArgumentException("Invalid event type");
+            throw new ArgumentOutOfRangeException("Invalid event type");
         }
+        return results;
     }
 
-    public List<EventDetail> ReadCsv()
+    private List<EventDetail> ReadAllCsv()
     {
         var results = new List<EventDetail>();
         results.AddRange(ReadFile<FitnessEvent>("FitnessActivities.CSV"));
@@ -48,17 +75,17 @@ public class EventCsvRepository
     /// <returns>A list of the events read from the file.</returns>
     private List<T> ReadFile<T>(string fileName) where T : EventDetail
     {
-        string path = Path.Combine(DataFolder, fileName);
-        if (!File.Exists(path))
+        ;
+        if (!File.Exists(_filePath))
         {
-            throw new FileNotFoundException($"File not found at {path}");
+            throw new FileNotFoundException($"File not found at {_filePath}");
         }
 
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
             PrepareHeaderForMatch = args => args.Header.ToLower(),
         };
-        using (var reader = new StreamReader(path))
+        using (var reader = new StreamReader(_filePath))
         using (var csv = new CsvReader(reader, config))
         {
 
@@ -89,6 +116,30 @@ public class EventCsvRepository
 
     }
 
+
+    public List<EventDetail> SearchEvent(DateTime searchDate, SearchFilter filter, List<EventDetail> data)
+    {
+        var results = new List<EventDetail>();
+        foreach (var item in data)
+        {
+            DateTime eventDate = DateTime.ParseExact(item.DateStartTime, "d/MM/yyyy H:mm", CultureInfo.InvariantCulture).Date;
+            bool isMatched = filter switch
+            {
+                SearchFilter.before => eventDate < searchDate,
+                SearchFilter.on => eventDate == searchDate,
+                SearchFilter.after => eventDate > searchDate,
+                _ => false
+            };
+            if (isMatched)
+            {
+                results.Add(item);
+            }
+        }
+
+
+
+        return results;
+    }
 
     /// <summary>
     /// Ultils to get path to csv files
