@@ -86,6 +86,19 @@ namespace EventActivityApp.UI.Views
                 return null;
             }
             DateTime dateValue = DateTextBox.SelectedDate.Value;
+
+            // Confirm before saving an event dated in the past
+            if (dateValue.Date < DateTime.Today)
+            {
+                var confirm = MessageBox.Show(
+                    $"The selected date {dateValue:d/MM/yyyy} is in the past. Do you want to continue?",
+                    "Are you sure?", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+                if (confirm != MessageBoxResult.OK)
+                {
+                    DateTextBox.Focus();
+                    return null;
+                }
+            }
             string date = dateValue.ToString("d/MM/yyyy");
 
             // Validate time picker if empty or not in correct format
@@ -136,9 +149,9 @@ namespace EventActivityApp.UI.Views
             {
                 // Validate location if empty
                 int minParticipant;
-                if (!int.TryParse(MinParticipantTextBox.Text, out minParticipant) || minParticipant < 0)
+                if (!int.TryParse(MinParticipantTextBox.Text, out minParticipant) || minParticipant < 2)
                 {
-                    MessageBox.Show("Please enter a valid number.", "Min Participant Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Please enter a valid number. Min participants is 2.", "Min Participant Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     MinParticipantTextBox.Focus();
                     return null;
                 }

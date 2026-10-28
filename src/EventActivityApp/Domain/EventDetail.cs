@@ -50,7 +50,14 @@ public class FitnessEvent : EventDetail
 
 public class EntertainmentEvent : EventDetail
 {
-    public int MinParticipants { get; set; }
+    public int MinParticipants
+    {
+        get; set
+        {
+            if (value < 2) { throw new ArgumentException("Min participant is 2."); }
+            field = value;
+        }
+    }
     public EntertainmentEvent(string dateStartTime, string title, decimal cost, int minParticipants)
          : base(dateStartTime, title, cost)
     {
