@@ -13,18 +13,20 @@ namespace EventActivityApp.UI.Views
     /// </summary>
     public partial class AddPage : Page
     {
-        public EventCsvRepository _repo;
+
+        /// <summary>
+        /// Provides access to the event CSV repository.
+        /// </summary>
+        public EventCsvRepository _repo = new EventCsvRepository();
+
+        /// <summary>
+        /// Initializes a new instance of the AddPage class.
+        /// </summary>
         public AddPage()
         {
             InitializeComponent();
-            _repo = new EventCsvRepository();
         }
 
-        /// <summary>
-        /// Validates input, saves the fitness event, and displays the result.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
         private void OnSaveFitnessClicked(object sender, RoutedEventArgs e)
         {
             // Run a validation on the form inputs
@@ -49,11 +51,7 @@ namespace EventActivityApp.UI.Views
                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        /// <summary>
-        /// Validates input, saves the entertainment event, and displays the result.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
+
         private void OnSaveEntertainmentClicked(object sender, RoutedEventArgs e)
         {
             // Run a validation on the form inputs
@@ -78,11 +76,6 @@ namespace EventActivityApp.UI.Views
             }
         }
 
-        /// <summary>
-        /// Validates the text input in the form and builds the event field values.
-        /// </summary>
-        /// <param name="type">The type of event being validated ("Fitness" or "Entertainment").</param>
-        /// <returns>The validated field values, or <see langword="null"/> when validation fails.</returns>
         private List<object>? ValidateTextInput(string type)
         {
             // Validate date picker if empty
@@ -143,7 +136,7 @@ namespace EventActivityApp.UI.Views
             {
                 // Validate location if empty
                 int minParticipant;
-                if (!int.TryParse(MinParticipantTextBox.Text, out minParticipant))
+                if (!int.TryParse(MinParticipantTextBox.Text, out minParticipant) || minParticipant < 0)
                 {
                     MessageBox.Show("Please enter a valid number.", "Min Participant Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     MinParticipantTextBox.Focus();

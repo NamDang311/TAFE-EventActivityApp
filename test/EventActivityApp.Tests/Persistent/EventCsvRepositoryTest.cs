@@ -1,15 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using Xunit.Abstractions;
-
-using EventActivityApp.Persistent;
 using EventActivityApp.Domain;
-using System.Linq;
-using Microsoft.VisualBasic;
 namespace EventActivityApp.Persistent;
 
 
@@ -31,14 +23,14 @@ public class EventCsvRepositoryTest
     private void FitnessMockFile_ShouldExist()
     {
         string path = Path.Combine(_repo.DataFolder, "FitnessActivities.CSV");
-        Assert.True(File.Exists(_repo._filePath));
+        Assert.True(File.Exists(path));
     }
 
     [Fact]
     private void EntertainmentMockFile_ShouldExist()
     {
         string path = Path.Combine(_repo.DataFolder, "EntertainmentActivities.CSV");
-        Assert.True(File.Exists(_repo._filePath));
+        Assert.True(File.Exists(path));
 
     }
 
@@ -63,8 +55,7 @@ public class EventCsvRepositoryTest
     [Fact]
     private void CanReadFitnessEvents_ShouldReturnList()
     {
-        _repo.CurrentType = EventType.fitness;
-        var list = _repo.ReadCsv();
+        var list = _repo.ReadCsv(EventType.fitness);
         Assert.Equal("FitnessActivities.CSV", Path.GetFileName(_repo._filePath));
         Assert.NotEmpty(list);
         Assert.IsType<List<EventDetail>>(list);
@@ -74,8 +65,8 @@ public class EventCsvRepositoryTest
     [Fact]
     private void CanReadEntertainmentEvents_ShouldReturnList()
     {
-        _repo.CurrentType = EventType.entertainment;
-        var list = _repo.ReadCsv();
+
+        var list = _repo.ReadCsv(EventType.entertainment);
         Assert.Equal("EntertainmentActivities.CSV", Path.GetFileName(_repo._filePath));
         Assert.NotEmpty(list);
         Assert.IsType<List<EventDetail>>(list);
@@ -84,16 +75,16 @@ public class EventCsvRepositoryTest
     [Fact]
     private void CanSaveFitnessEvent_ShouldWriteToFile()
     {
-        _repo.CurrentType = EventType.fitness;
-        string original = File.ReadAllText(_repo._filePath);
+        string path = Path.Combine(_repo.DataFolder, "FitnessActivities.CSV");
+        string original = File.ReadAllText(path);
         var event1 = new EventActivityApp.Domain.FitnessEvent("28/10/2026", "Swimming", 3, "Liverpool Center");
         string[] lastLine;
 
         try
         {
 
-            _repo.WriteCsv(event1);
-            lastLine = File.ReadAllLines(_repo._filePath);
+            _repo.WriteCsv(event1, EventType.fitness);
+            lastLine = File.ReadAllLines(path);
             Assert.Equal(
                 "28/10/2026,Swimming,3,Liverpool Center", lastLine[^1]);
 
@@ -101,22 +92,22 @@ public class EventCsvRepositoryTest
 
         finally
         {
-            File.WriteAllText(_repo._filePath, original);
+            File.WriteAllText(path, original);
         }
     }
 
     [Fact]
     public void CanSaveEntertainmentEvent_ShouldWriteToFile()
     {
-        _repo.CurrentType = EventType.entertainment;
-        string original = File.ReadAllText(_repo._filePath);
+        string path = Path.Combine(_repo.DataFolder, "EntertainmentActivities.CSV");
+        string original = File.ReadAllText(path);
         var event1 = new EventActivityApp.Domain.EntertainmentEvent("28/10/2026", "Chess", 3, 1);
         string[] lastLine;
 
         try
         {
-            _repo.WriteCsv(event1);
-            lastLine = File.ReadAllLines(_repo._filePath);
+            _repo.WriteCsv(event1, EventType.entertainment);
+            lastLine = File.ReadAllLines(path);
             Assert.Equal(
                 "28/10/2026,Chess,3,1", lastLine[^1]);
 
@@ -124,7 +115,7 @@ public class EventCsvRepositoryTest
 
         finally
         {
-            File.WriteAllText(_repo._filePath, original);
+            File.WriteAllText(path, original);
         }
     }
 

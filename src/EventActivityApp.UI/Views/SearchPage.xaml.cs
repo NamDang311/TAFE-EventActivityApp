@@ -13,19 +13,19 @@ namespace myapp.Views
     /// </summary>
     public partial class SearchPage : Page
     {
-        public EventCsvRepository _repo;
+        /// <summary>
+        /// Provides access to the event CSV repository.
+        /// </summary>
+        public EventCsvRepository _repo = new EventCsvRepository();
+
+        /// <summary>
+        /// Initializes a new instance of the SearchPage class.
+        /// </summary>
         public SearchPage()
         {
             InitializeComponent();
-            _repo = new EventCsvRepository();
         }
 
-        /// <summary>
-        /// Loads event details from the CSV repository and displays them in the activity table.
-        /// </summary>
-        /// <remarks>Displays an error message when an <see cref="ArgumentException"/> occurs.</remarks>
-        /// <param name="sender">The object that raised the event.</param>
-        /// <param name="e">The routed event data.</param>
         private void SearchActivitiesClicked(object sender, RoutedEventArgs e)
         {
             // Check if Search Date field is empty
@@ -40,23 +40,21 @@ namespace myapp.Views
             try
             {
                 var results = new List<EventDetail>();
-                foreach (var item in _repo.ReadAllCsv())
+
+                if (DateFilterRadioBefore.IsChecked == true)
                 {
-                    DateTime eventDate = DateTime.ParseExact(item.DateStartTime, "d/MM/yyyy H:mm", CultureInfo.InvariantCulture).Date;
-                    if (DateFilterRadioBefore.IsChecked == true && eventDate < searchDate)
-                    {
-                        results.Add(item);
-                    }
-                    else if (DateFilterRadioOn.IsChecked == true && eventDate == searchDate)
-                    {
-                        results.Add(item);
-                    }
-                    else if (DateFilterRadioAfter.IsChecked == true && eventDate > searchDate
-                    )
-                    {
-                        results.Add(item);
-                    }
+                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.before, _repo.ReadAllCsv()));
                 }
+                else if (DateFilterRadioOn.IsChecked == true)
+                {
+                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.on, _repo.ReadAllCsv()));
+                }
+                else if (DateFilterRadioAfter.IsChecked == true
+                )
+                {
+                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.after, _repo.ReadAllCsv()));
+                }
+
 
                 if (results.Count == 0)
                 {
@@ -66,10 +64,6 @@ namespace myapp.Views
                 Debug.WriteLine(results);
                 ActivityTable.ItemsSource = results;
 
-
-
-
-
             }
             catch (ArgumentException ex)
             {
@@ -77,24 +71,8 @@ namespace myapp.Views
             }
         }
 
-        private bool FindEvent(EventDetail evt)
-        {
-            if (evt.DateStartTime == "1/03/2025 14:00")
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
 
 
-        /// <summary>
-        /// Displays all event details read from the CSV file.
-        /// </summary>
-        /// <param name="sender">The source of the routed event.</param>
-        /// <param name="e">The event data.</param>
         private void OnDisplayAllClicked(object sender, RoutedEventArgs e)
         {
             try

@@ -18,7 +18,9 @@ namespace EventActivityApp.UI.Views
     /// </summary>
     public partial class Home : Page
     {
-
+        /// <summary>
+        /// Initializes a new instance of the Home class.
+        /// </summary>
         public Home()
         {
             InitializeComponent();

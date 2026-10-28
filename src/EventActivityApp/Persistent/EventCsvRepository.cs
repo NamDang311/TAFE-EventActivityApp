@@ -63,8 +63,8 @@ public class EventCsvRepository
     public List<EventDetail> ReadAllCsv()
     {
         var results = new List<EventDetail>();
-        results.AddRange(ReadFile<FitnessEvent>("FitnessActivities.CSV"));
-        results.AddRange(ReadFile<EntertainmentEvent>("EntertainmentActivities.CSV"));
+        results.AddRange(ReadCsv(EventType.fitness));
+        results.AddRange(ReadCsv(EventType.entertainment));
         return results;
     }
 
@@ -139,7 +139,7 @@ public class EventCsvRepository
 
 
 
-        return results;
+        return results.OrderByDescending(e => DateTime.ParseExact(e.DateStartTime, "d/MM/yyyy H:mm", CultureInfo.InvariantCulture)).ToList();
     }
 
     /// <summary>

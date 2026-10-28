@@ -43,26 +43,15 @@
             AddPage
             </summary>
         </member>
-        <member name="M:EventActivityApp.UI.Views.AddPage.OnSaveFitnessClicked(System.Object,System.Windows.RoutedEventArgs)">
+        <member name="F:EventActivityApp.UI.Views.AddPage._repo">
             <summary>
-            Validates input, saves the fitness event, and displays the result.
+            Provides access to the event CSV repository.
             </summary>
-            <param name="sender">The source of the event.</param>
-            <param name="e">The event data.</param>
         </member>
-        <member name="M:EventActivityApp.UI.Views.AddPage.OnSaveEntertainmentClicked(System.Object,System.Windows.RoutedEventArgs)">
+        <member name="M:EventActivityApp.UI.Views.AddPage.#ctor">
             <summary>
-            Validates input, saves the entertainment event, and displays the result.
+            Initializes a new instance of the AddPage class.
             </summary>
-            <param name="sender">The source of the event.</param>
-            <param name="e">The event data.</param>
-        </member>
-        <member name="M:EventActivityApp.UI.Views.AddPage.ValidateTextInput(System.String)">
-            <summary>
-            Validates the text input in the form and builds the event field values.
-            </summary>
-            <param name="type">The type of event being validated ("Fitness" or "Entertainment").</param>
-            <returns>The validated field values, or <see langword="null"/> when validation fails.</returns>
         </member>
         <member name="M:EventActivityApp.UI.Views.AddPage.InitializeComponent">
             <summary>
@@ -75,6 +64,11 @@
             </summary>
             <summary>
             Home
+            </summary>
+        </member>
+        <member name="M:EventActivityApp.UI.Views.Home.#ctor">
+            <summary>
+            Initializes a new instance of the Home class.
             </summary>
         </member>
         <member name="M:EventActivityApp.UI.Views.Home.InitializeComponent">
@@ -90,20 +84,15 @@
             SearchPage
             </summary>
         </member>
-        <member name="M:myapp.Views.SearchPage.SearchActivitiesClicked(System.Object,System.Windows.RoutedEventArgs)">
+        <member name="F:myapp.Views.SearchPage._repo">
             <summary>
-            Loads event details from the CSV repository and displays them in the activity table.
+            Provides access to the event CSV repository.
             </summary>
-            <remarks>Displays an error message when an <see cref="T:System.ArgumentException"/> occurs.</remarks>
-            <param name="sender">The object that raised the event.</param>
-            <param name="e">The routed event data.</param>
         </member>
-        <member name="M:myapp.Views.SearchPage.OnDisplayAllClicked(System.Object,System.Windows.RoutedEventArgs)">
+        <member name="M:myapp.Views.SearchPage.#ctor">
             <summary>
-            Displays all event details read from the CSV file.
+            Initializes a new instance of the SearchPage class.
             </summary>
-            <param name="sender">The source of the routed event.</param>
-            <param name="e">The event data.</param>
         </member>
         <member name="M:myapp.Views.SearchPage.InitializeComponent">
             <summary>
