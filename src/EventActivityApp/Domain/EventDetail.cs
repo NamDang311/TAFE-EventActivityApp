@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
 namespace EventActivityApp.Domain;
@@ -9,7 +8,17 @@ namespace EventActivityApp.Domain;
 public abstract class EventDetail
 {
     public DateTime DateStartTime { get; set; }
-    public string Title { get; set; }
+    public string Title
+    {
+        get; set
+        {
+            if (value.Length < 3)
+            {
+                throw new ArgumentException("Title must have at least 3 characters.");
+            }
+            field = value;
+        }
+    }
     public decimal Cost
     {
         get; set
@@ -18,13 +27,6 @@ public abstract class EventDetail
             field = value;
         }
     }
-
-    // // Used by CsvHelper when reading records
-    // protected EventDetail()
-    // {
-    //     DateStartTime = DateTime.MinValue;
-    //     Title = string.Empty;
-    // }
 
     protected EventDetail(DateTime dateStartTime, string title, decimal cost)
     {
@@ -73,29 +75,29 @@ public class EntertainmentActivity : EventDetail
 }
 
 
+/** No longer need after migrated to DB*/
+// /* 
+// Map the property to fix the order when writting csv. 
+// CSVHelper: For a derived class, reflection usually lists the subclass's own properties before the inherited ones. 
+// */
+// public sealed class FitnessActivityMap : ClassMap<FitnessActivity>
+// {
+//     public FitnessActivityMap()
+//     {
+//         Map(m => m.DateStartTime).Index(0).Name("DateStartTime").TypeConverterOption.Format("d/MM/yyyy H:mm");
+//         Map(m => m.Title).Index(1).Name("Title");
+//         Map(m => m.Cost).Index(2).Name("Cost");
+//         Map(m => m.Location).Index(3).Name("Location");
+//     }
+// }
 
-/* 
-Map the property to fix the order when writting csv. 
-CSVHelper: For a derived class, reflection usually lists the subclass's own properties before the inherited ones. 
-*/
-public sealed class FitnessActivityMap : ClassMap<FitnessActivity>
-{
-    public FitnessActivityMap()
-    {
-        Map(m => m.DateStartTime).Index(0).Name("DateStartTime").TypeConverterOption.Format("d/MM/yyyy H:mm");
-        Map(m => m.Title).Index(1).Name("Title");
-        Map(m => m.Cost).Index(2).Name("Cost");
-        Map(m => m.Location).Index(3).Name("Location");
-    }
-}
-
-public sealed class EntertainmentActivityMap : ClassMap<EntertainmentActivity>
-{
-    public EntertainmentActivityMap()
-    {
-        Map(m => m.DateStartTime).Index(0).Name("DateStartTime").TypeConverterOption.Format("d/MM/yyyy H:mm");
-        Map(m => m.Title).Index(1).Name("Title");
-        Map(m => m.Cost).Index(2).Name("Cost");
-        Map(m => m.MinParticipants).Index(3).Name("MinParticipants");
-    }
-}
+// public sealed class EntertainmentActivityMap : ClassMap<EntertainmentActivity>
+// {
+//     public EntertainmentActivityMap()
+//     {
+//         Map(m => m.DateStartTime).Index(0).Name("DateStartTime").TypeConverterOption.Format("d/MM/yyyy H:mm");
+//         Map(m => m.Title).Index(1).Name("Title");
+//         Map(m => m.Cost).Index(2).Name("Cost");
+//         Map(m => m.MinParticipants).Index(3).Name("MinParticipants");
+//     }
+// }

@@ -24,6 +24,7 @@ public class EventCsvRepository
     private const string CsvDateFormat = "d/MM/yyyy H:mm";
 
     public Db Db = new Db();
+    
     private string GetFileName(EventType type) => type switch
     {
         EventType.fitness => "FitnessActivities.CSV",
