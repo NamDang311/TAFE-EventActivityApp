@@ -40,7 +40,7 @@ namespace myapp.Views
             try
             {
                 var results = new List<EventDetail>();
-                var allEvents = _repo.ReadAllCsv();
+                var allEvents = _repo.ReadAllActivities();
 
                 //if (DateFilterRadioBefore.IsChecked == true)
                 //{
@@ -78,7 +78,7 @@ namespace myapp.Views
         {
             try
             {
-                List<EventDetail> results = _repo.ReadAllCsv();
+                List<EventDetail> results = _repo.ReadAllActivities();
                 ActivityTable.ItemsSource = results;
             }
             catch (ArgumentException ex)

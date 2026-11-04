@@ -3,8 +3,6 @@ using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
 namespace EventActivityApp.Domain;
 
-
-// TODO: Explore abstract class
 public abstract class EventDetail
 {
     public DateTime DateStartTime { get; set; }

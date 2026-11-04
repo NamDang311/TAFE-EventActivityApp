@@ -56,8 +56,8 @@
                 </Button>
                 <Button Click="OnDisplayAllClicked">Display All Activities</Button>
             </DockPanel>
-            
-            <!-- Result table view  -->
+
+            <!--  Result table view  -->
             <DataGrid
                 x:Name="ActivityTable"
                 Height="300"
@@ -69,7 +69,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn
                         Width="2*"
-                        Binding="{Binding DateStartTime}"
+                        Binding="{Binding DateStartTime, StringFormat='d/MM/yyyy HH:mm'}"
                         Header="DateTime" />
                     <DataGridTextColumn
                         Width="2*"
