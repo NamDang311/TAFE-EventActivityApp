@@ -47,11 +47,11 @@ public class EventCsvRepository
         var results = new List<EventDetail>();
         if (type is EventType.fitness)
         {
-            results.AddRange(ReadFile<FitnessEvent>("FitnessActivities.CSV"));
+            results.AddRange(ReadFile<FitnessActivity>("FitnessActivities.CSV"));
         }
         else if (type is EventType.entertainment)
         {
-            results.AddRange(ReadFile<EntertainmentEvent>("EntertainmentActivities.CSV"));
+            results.AddRange(ReadFile<EntertainmentActivity>("EntertainmentActivities.CSV"));
         }
         else
         {
@@ -71,7 +71,7 @@ public class EventCsvRepository
     /// <summary>
     /// Reads all records from a CSV file in the Data folder and maps each row to an event of type <typeparamref name="T"/>.
     /// </summary>
-    /// <typeparam name="T">The event type to create for each row (for example, <see cref="FitnessEvent"/> or <see cref="EntertainmentEvent"/>).</typeparam>
+    /// <typeparam name="T">The event type to create for each row (for example, <see cref="FitnessActivity"/> or <see cref="EntertainmentActivity"/>).</typeparam>
     /// <param name="fileName">The name of the CSV file to read, such as "FitnessActivities.CSV".</param>
     /// <returns>A list of the events read from the file.</returns>
     private List<T> ReadFile<T>(string fileName) where T : EventDetail
@@ -107,8 +107,8 @@ public class EventCsvRepository
             };
             using (var csv = new CsvWriter(writer, config))
             {
-                csv.Context.RegisterClassMap<FitnessEventMap>();
-                csv.Context.RegisterClassMap<EntertainmentEventMap>();
+                csv.Context.RegisterClassMap<FitnessActivityMap>();
+                csv.Context.RegisterClassMap<EntertainmentActivityMap>();
                 csv.WriteRecord(record);
                 csv.NextRecord();
             }

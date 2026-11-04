@@ -34,10 +34,10 @@ public abstract class EventDetail
 
 }
 
-public class FitnessEvent : EventDetail
+public class FitnessActivity : EventDetail
 {
     public string Location { get; set; }
-    public FitnessEvent(string dateStartTime, string title, decimal cost, string location)
+    public FitnessActivity(string dateStartTime, string title, decimal cost, string location)
          : base(dateStartTime, title, cost)
     {
         Location = location;
@@ -48,7 +48,7 @@ public class FitnessEvent : EventDetail
     }
 }
 
-public class EntertainmentEvent : EventDetail
+public class EntertainmentActivity : EventDetail
 {
     public int MinParticipants
     {
@@ -58,7 +58,7 @@ public class EntertainmentEvent : EventDetail
             field = value;
         }
     }
-    public EntertainmentEvent(string dateStartTime, string title, decimal cost, int minParticipants)
+    public EntertainmentActivity(string dateStartTime, string title, decimal cost, int minParticipants)
          : base(dateStartTime, title, cost)
     {
         MinParticipants = minParticipants;
@@ -77,9 +77,9 @@ public class EntertainmentEvent : EventDetail
 Map the property to fix the order when writting csv. 
 CSVHelper: For a derived class, reflection usually lists the subclass's own properties before the inherited ones. 
 */
-public sealed class FitnessEventMap : ClassMap<FitnessEvent>
+public sealed class FitnessActivityMap : ClassMap<FitnessActivity>
 {
-    public FitnessEventMap()
+    public FitnessActivityMap()
     {
         Map(m => m.DateStartTime).Index(0).Name("DateStartTime");
         Map(m => m.Title).Index(1).Name("Title");
@@ -88,9 +88,9 @@ public sealed class FitnessEventMap : ClassMap<FitnessEvent>
     }
 }
 
-public sealed class EntertainmentEventMap : ClassMap<EntertainmentEvent>
+public sealed class EntertainmentActivityMap : ClassMap<EntertainmentActivity>
 {
-    public EntertainmentEventMap()
+    public EntertainmentActivityMap()
     {
         Map(m => m.DateStartTime).Index(0).Name("DateStartTime");
         Map(m => m.Title).Index(1).Name("Title");

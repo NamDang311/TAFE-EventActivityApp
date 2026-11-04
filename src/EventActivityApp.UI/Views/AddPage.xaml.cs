@@ -36,10 +36,10 @@ namespace EventActivityApp.UI.Views
                 return;
             }
 
-            //Create a new FitnessEvent object
+            //Create a new FitnessActivity object
             try
             {
-                var eventDetail = new EventActivityApp.Domain.FitnessEvent($"{values[0]} {values[1]}", (string)values[2], (decimal)values[3], (string)values[4]);
+                var eventDetail = new EventActivityApp.Domain.FitnessActivity($"{values[0]} {values[1]}", (string)values[2], (decimal)values[3], (string)values[4]);
                 // Write to csv
                 _repo.WriteCsv(eventDetail, EventType.fitness);
                 MessageBox.Show($"Event saved:\n" +
@@ -63,7 +63,7 @@ namespace EventActivityApp.UI.Views
             // Create a new EventDetail object
             try
             {
-                var eventDetail = new EventActivityApp.Domain.EntertainmentEvent($"{values[0]} {values[1]}", (string)values[2], (decimal)values[3], (int)values[4]);
+                var eventDetail = new EventActivityApp.Domain.EntertainmentActivity($"{values[0]} {values[1]}", (string)values[2], (decimal)values[3], (int)values[4]);
                 // Write to csv
                 _repo.WriteCsv(eventDetail, EventType.entertainment);
                 MessageBox.Show($"Event saved:\n" +
