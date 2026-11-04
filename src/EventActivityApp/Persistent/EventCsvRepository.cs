@@ -113,6 +113,7 @@ public class EventCsvRepository
                 _ => throw new InvalidOperationException($"Unknown activity type")
             };
             results.Add(activity);
+
         }
 
         return results;
@@ -163,9 +164,31 @@ public class EventCsvRepository
     // ;
 
     // }
-    public void WriteCsv<T>(T record, EventType type) where T : EventDetail
+    // public void WriteEvent<T>(T record, EventType type) where T : EventDetail
+    public void WriteEvent(EventDetail record)
     {
 
+        using var connection = Db.OpenConnection();
+        using var command = connection.CreateCommand();
+        command.CommandType = System.Data.CommandType.StoredProcedure;
+        command.Parameters.AddWithValue("p_DateStartTime", record.DateStartTime);
+        command.Parameters.AddWithValue("p_Title", record.Title);
+        command.Parameters.AddWithValue("p_Cost", record.Cost);
+        switch (record)
+        {
+            case FitnessActivity fitness:
+                command.CommandText = "AddFitnessActivity";
+                command.Parameters.AddWithValue("p_Location", fitness.Location);
+                break;
+            case EntertainmentActivity entertainment:
+                command.CommandText = "AddEntertainmentActivity";
+                command.Parameters.AddWithValue("p_MinParticipants", entertainment.MinParticipants);
+                break;
+            default:
+                throw new InvalidOperationException("Invalid event type.");
+        }
+
+        command.ExecuteNonQuery();
     }
 
     // public List<EventDetail> SearchEvent(DateTime searchDate, SearchFilter filter, List<EventDetail> data)
@@ -193,12 +216,11 @@ public class EventCsvRepository
     {
         var results = new List<EventDetail>();
         using var connection = Db.OpenConnection();
-        string query = "SearchActivitesByDate(@date,@op)";
+        string query = "SearchActivitiesByDate";
         using var command = new MySqlCommand(query, connection);
-        command.Parameters.AddWithValue("date", searchDate);
-        command.Parameters.AddWithValue("op", filter);
         command.CommandType = System.Data.CommandType.StoredProcedure;
-
+        command.Parameters.AddWithValue("p_SearchDate", searchDate.Date);
+        command.Parameters.AddWithValue("p_Operator", filter.ToString());
 
         using var reader = command.ExecuteReader();
         while (reader.Read())
@@ -207,20 +229,15 @@ public class EventCsvRepository
             string title = reader.GetString("Title");
             decimal cost = reader.GetDecimal("Cost");
 
-
-            EventDetail activity = reader.GetString("ActivityType") switch
-            {
-                "Fitness" => new FitnessActivity(dateStartTime, title, cost, reader.GetString("Location")),
-                "Entertainment" => new EntertainmentActivity(dateStartTime, title, cost, reader.GetInt16("MinParticipants")),
-                _ => throw new InvalidOperationException($"Unknown activity type")
-            };
+            // Since DB doesn't return activity type, this is a way around.
+            EventDetail activity = !reader.IsDBNull(reader.GetOrdinal("Location"))
+            ? new FitnessActivity(dateStartTime, title, cost, reader.GetString("Location"))
+            : new EntertainmentActivity(dateStartTime, title, cost, reader.GetInt16("MinParticipants"));
             results.Add(activity);
+
         }
-        return results;
+        return results.OrderByDescending(e => e.DateStartTime).ToList();
 
-
-
-        // return results.OrderByDescending(e => e.DateStartTime).ToList();
     }
 
     /// <summary>

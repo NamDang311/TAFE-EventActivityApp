@@ -42,7 +42,7 @@ namespace EventActivityApp.UI.Views
 
                 var eventDetail = new EventActivityApp.Domain.FitnessActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (string)values[3]);
                 // Write to csv
-                _repo.WriteCsv(eventDetail, EventType.fitness);
+                _repo.WriteEvent(eventDetail);
                 MessageBox.Show($"Event saved:\n" +
                     $"{eventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -67,7 +67,7 @@ namespace EventActivityApp.UI.Views
 
                 var eventDetail = new EventActivityApp.Domain.EntertainmentActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (int)values[3]);
                 // Write to csv
-                _repo.WriteCsv(eventDetail, EventType.entertainment);
+                _repo.WriteEvent(eventDetail);
                 MessageBox.Show($"Event saved:\n" +
                     $"{eventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -117,6 +117,13 @@ namespace EventActivityApp.UI.Views
             if (string.IsNullOrWhiteSpace(TitleTextBox.Text))
             {
                 MessageBox.Show("Please enter a title.", "Title Required", MessageBoxButton.OK, MessageBoxImage.Error);
+                TitleTextBox.Focus();
+                return null;
+            }
+
+            if (TitleTextBox.Text.Length < 3)
+            {
+                MessageBox.Show("Title needs to have at least 3 characters.", "Title Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 TitleTextBox.Focus();
                 return null;
             }

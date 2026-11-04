@@ -42,19 +42,19 @@ namespace myapp.Views
                 var results = new List<EventDetail>();
                 var allEvents = _repo.ReadAllActivities();
 
-                //if (DateFilterRadioBefore.IsChecked == true)
-                //{
-                //    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.before, allEvents));
-                //}
-                //else if (DateFilterRadioOn.IsChecked == true)
-                //{
-                //    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.on, allEvents));
-                //}
-                //else if (DateFilterRadioAfter.IsChecked == true
-                //)
-                //{
-                //    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.after, allEvents));
-                //}
+                if (DateFilterRadioBefore.IsChecked == true)
+                {
+                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.before));
+                }
+                else if (DateFilterRadioOn.IsChecked == true)
+                {
+                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.on));
+                }
+                else if (DateFilterRadioAfter.IsChecked == true
+                )
+                {
+                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.after));
+                }
 
 
                 if (results.Count == 0)
