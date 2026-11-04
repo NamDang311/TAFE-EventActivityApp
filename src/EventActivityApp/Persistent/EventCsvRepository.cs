@@ -24,6 +24,8 @@ public enum SearchFilter
 
 public class EventCsvRepository
 {
+    private const string CsvDateFormat = "d/MM/yyyy H:mm";
+
     // public EventType CurrentType { get; set; }
     private string GetFileName(EventType type) => type switch
     {
@@ -89,6 +91,8 @@ public class EventCsvRepository
         using (var reader = new StreamReader(_filePath))
         using (var csv = new CsvReader(reader, config))
         {
+            // Records are built through constructors, so [Format] on the property is ignored
+            csv.Context.TypeConverterOptionsCache.GetOptions<DateTime>().Formats = [CsvDateFormat];
 
             return csv.GetRecords<T>().ToList();
         }
@@ -107,7 +111,8 @@ public class EventCsvRepository
             };
             using (var csv = new CsvWriter(writer, config))
             {
-                csv.Context.RegisterClassMap<FitnessActivityMap>();
+                csv.Context.TypeConverterOptionsCache.GetOptions<DateTime>().Formats = [CsvDateFormat];
+    csv.Context.RegisterClassMap<FitnessActivityMap>();
                 csv.Context.RegisterClassMap<EntertainmentActivityMap>();
                 csv.WriteRecord(record);
                 csv.NextRecord();
@@ -123,7 +128,7 @@ public class EventCsvRepository
         var results = new List<EventDetail>();
         foreach (var item in data)
         {
-            DateTime eventDate = DateTime.ParseExact(item.DateStartTime, "d/MM/yyyy H:mm", CultureInfo.InvariantCulture).Date;
+            DateTime eventDate = item.DateStartTime.Date;
             bool isMatched = filter switch
             {
                 SearchFilter.before => eventDate < searchDate,
@@ -139,7 +144,7 @@ public class EventCsvRepository
 
 
 
-        return results.OrderByDescending(e => DateTime.ParseExact(e.DateStartTime, "d/MM/yyyy H:mm", CultureInfo.InvariantCulture)).ToList();
+        return results.OrderByDescending(e => e.DateStartTime).ToList();
     }
 
     /// <summary>

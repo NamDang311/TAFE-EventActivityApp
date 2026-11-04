@@ -39,7 +39,8 @@ namespace EventActivityApp.UI.Views
             //Create a new FitnessActivity object
             try
             {
-                var eventDetail = new EventActivityApp.Domain.FitnessActivity($"{values[0]} {values[1]}", (string)values[2], (decimal)values[3], (string)values[4]);
+
+                var eventDetail = new EventActivityApp.Domain.FitnessActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (string)values[3]);
                 // Write to csv
                 _repo.WriteCsv(eventDetail, EventType.fitness);
                 MessageBox.Show($"Event saved:\n" +
@@ -63,7 +64,8 @@ namespace EventActivityApp.UI.Views
             // Create a new EventDetail object
             try
             {
-                var eventDetail = new EventActivityApp.Domain.EntertainmentActivity($"{values[0]} {values[1]}", (string)values[2], (decimal)values[3], (int)values[4]);
+
+                var eventDetail = new EventActivityApp.Domain.EntertainmentActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (int)values[3]);
                 // Write to csv
                 _repo.WriteCsv(eventDetail, EventType.entertainment);
                 MessageBox.Show($"Event saved:\n" +
@@ -99,7 +101,7 @@ namespace EventActivityApp.UI.Views
                     return null;
                 }
             }
-            string date = dateValue.ToString("d/MM/yyyy");
+            DateTime date = dateValue;
 
             // Validate time picker if empty or not in correct format
             if (!TimeSpan.TryParseExact(TimeTextBox.Text.Trim(), @"h\:mm", CultureInfo.InvariantCulture, out TimeSpan parsed))
@@ -109,7 +111,7 @@ namespace EventActivityApp.UI.Views
                 return null;
             }
 
-            string time = parsed.ToString(@"h\:mm");
+            TimeSpan time = parsed;
 
             // Validate title if empty
             if (string.IsNullOrWhiteSpace(TitleTextBox.Text))
@@ -143,7 +145,7 @@ namespace EventActivityApp.UI.Views
 
                 string location = FitnessLocationTextBox.Text;
 
-                return [date, time, title, cost, location];
+                return [date + time, title, cost, location];
             }
             else
             {
@@ -156,7 +158,7 @@ namespace EventActivityApp.UI.Views
                     return null;
                 }
 
-                return [date, time, title, cost, minParticipant];
+                return [date + time, title, cost, minParticipant];
             }
         }
 

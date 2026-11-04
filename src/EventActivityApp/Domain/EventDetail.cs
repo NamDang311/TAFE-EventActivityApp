@@ -1,13 +1,14 @@
 using System;
 using System.Runtime.CompilerServices;
 using CsvHelper.Configuration;
+using CsvHelper.Configuration.Attributes;
 namespace EventActivityApp.Domain;
 
 
 // TODO: Explore abstract class
 public abstract class EventDetail
 {
-    public string DateStartTime { get; set; }
+    public DateTime DateStartTime { get; set; }
     public string Title { get; set; }
     public decimal Cost
     {
@@ -18,14 +19,14 @@ public abstract class EventDetail
         }
     }
 
-    // Used by CsvHelper when reading records
-    protected EventDetail()
-    {
-        DateStartTime = string.Empty;
-        Title = string.Empty;
-    }
+    // // Used by CsvHelper when reading records
+    // protected EventDetail()
+    // {
+    //     DateStartTime = DateTime.MinValue;
+    //     Title = string.Empty;
+    // }
 
-    protected EventDetail(string dateStartTime, string title, decimal cost)
+    protected EventDetail(DateTime dateStartTime, string title, decimal cost)
     {
         DateStartTime = dateStartTime;
         Title = title;
@@ -37,7 +38,7 @@ public abstract class EventDetail
 public class FitnessActivity : EventDetail
 {
     public string Location { get; set; }
-    public FitnessActivity(string dateStartTime, string title, decimal cost, string location)
+    public FitnessActivity(DateTime dateStartTime, string title, decimal cost, string location)
          : base(dateStartTime, title, cost)
     {
         Location = location;
@@ -58,7 +59,7 @@ public class EntertainmentActivity : EventDetail
             field = value;
         }
     }
-    public EntertainmentActivity(string dateStartTime, string title, decimal cost, int minParticipants)
+    public EntertainmentActivity(DateTime dateStartTime, string title, decimal cost, int minParticipants)
          : base(dateStartTime, title, cost)
     {
         MinParticipants = minParticipants;
@@ -81,7 +82,7 @@ public sealed class FitnessActivityMap : ClassMap<FitnessActivity>
 {
     public FitnessActivityMap()
     {
-        Map(m => m.DateStartTime).Index(0).Name("DateStartTime");
+        Map(m => m.DateStartTime).Index(0).Name("DateStartTime").TypeConverterOption.Format("d/MM/yyyy H:mm");
         Map(m => m.Title).Index(1).Name("Title");
         Map(m => m.Cost).Index(2).Name("Cost");
         Map(m => m.Location).Index(3).Name("Location");
@@ -92,7 +93,7 @@ public sealed class EntertainmentActivityMap : ClassMap<EntertainmentActivity>
 {
     public EntertainmentActivityMap()
     {
-        Map(m => m.DateStartTime).Index(0).Name("DateStartTime");
+        Map(m => m.DateStartTime).Index(0).Name("DateStartTime").TypeConverterOption.Format("d/MM/yyyy H:mm");
         Map(m => m.Title).Index(1).Name("Title");
         Map(m => m.Cost).Index(2).Name("Cost");
         Map(m => m.MinParticipants).Index(3).Name("MinParticipants");
