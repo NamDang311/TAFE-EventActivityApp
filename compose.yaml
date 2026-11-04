@@ -4,7 +4,7 @@ services:
     container_name: eventactivity-db
     environment:
       MARIADB_ROOT_PASSWORD: rootpass
-      MARIADB_DATABASE: eventactivity
+      MARIADB_DATABASE: ActivitiesDb
       MARIADB_USER: eventapp
       MARIADB_PASSWORD: eventpass
     ports:
