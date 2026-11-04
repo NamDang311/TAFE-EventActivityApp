@@ -1,13 +1,10 @@
 using CsvHelper;
 using CsvHelper.Configuration;
 using EventActivityApp.Domain;
-using Microsoft.VisualBasic;
-using System;
-using System.Diagnostics;
-using System.Dynamic;
 using System.Globalization;
 namespace EventActivityApp.Persistent;
 
+using EventActivityApp.Data;
 
 public enum EventType
 {
@@ -24,7 +21,7 @@ public enum SearchFilter
 
 public class EventCsvRepository
 {
-    // public EventType CurrentType { get; set; }
+    public Db Db = new Db();
     private string GetFileName(EventType type) => type switch
     {
         EventType.fitness => "FitnessActivities.CSV",
@@ -62,18 +59,37 @@ public class EventCsvRepository
 
     public List<EventDetail> ReadAllCsv()
     {
+        using var connection = Db.OpenConnection();
+        using var command = connection.CreateCommand();
+        command.CommandText = "GetAllActivities";
+        command.CommandType = System.Data.CommandType.StoredProcedure;
         var results = new List<EventDetail>();
-        results.AddRange(ReadCsv(EventType.fitness));
-        results.AddRange(ReadCsv(EventType.entertainment));
+
+        /** Back up for old methods*/
+        // results.AddRange(ReadCsv(EventType.fitness));
+        // results.AddRange(ReadCsv(EventType.entertainment));
+        /** ----------------- */
+
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            string dateStartTime = reader.GetDateTime("DateStartTime").ToString("d/MM/yyyy H:mm", CultureInfo.InvariantCulture);
+            string title = reader.GetString("Title");
+            decimal cost = reader.GetDecimal("Cost");
+
+            EventDetail activity = reader.GetString("ActivityType") switch
+            {
+                "Fitness" => new FitnessEvent(dateStartTime, title, cost, reader.GetString("Location")),
+                "Entertainment" => new EntertainmentEvent(dateStartTime, title, cost, reader.GetInt32("MinParticipants")),
+                "Unknown" => throw new InvalidOperationException($"Unknown activity type")
+            };
+            results.Add(activity);
+        }
+
         return results;
     }
 
-    /// <summary>
-    /// Reads all records from a CSV file in the Data folder and maps each row to an event of type <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">The event type to create for each row (for example, <see cref="FitnessEvent"/> or <see cref="EntertainmentEvent"/>).</typeparam>
-    /// <param name="fileName">The name of the CSV file to read, such as "FitnessActivities.CSV".</param>
-    /// <returns>A list of the events read from the file.</returns>
+
     private List<T> ReadFile<T>(string fileName) where T : EventDetail
     {
         ;
@@ -120,33 +136,52 @@ public class EventCsvRepository
 
     public List<EventDetail> SearchEvent(DateTime searchDate, SearchFilter filter, List<EventDetail> data)
     {
+        // var results = new List<EventDetail>();
+        // foreach (var item in data)
+        // {
+        //     DateTime eventDate = DateTime.ParseExact(item.DateStartTime, "d/MM/yyyy H:mm", CultureInfo.InvariantCulture).Date;
+        //     bool isMatched = filter switch
+        //     {
+        //         SearchFilter.before => eventDate < searchDate,
+        //         SearchFilter.on => eventDate == searchDate,
+        //         SearchFilter.after => eventDate > searchDate,
+        //         _ => false
+        //     };
+        //     if (isMatched)
+        //     {
+        //         results.Add(item);
+        //     }
+        // }
+
+        // return results.OrderByDescending(e => DateTime.ParseExact(e.DateStartTime, "d/MM/yyyy H:mm", CultureInfo.InvariantCulture)).ToList();
+
+        using var connection = Db.OpenConnection();
+        using var command = connection.CreateCommand();
+        command.CommandText = "SearchActivitesByDate(@d,@op)";
+        command.Parameters.AddWithValue("p", searchDate);
+        command.Parameters.AddWithValue("op", filter);
+        command.CommandType = System.Data.CommandType.StoredProcedure;
         var results = new List<EventDetail>();
-        foreach (var item in data)
+
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
         {
-            DateTime eventDate = DateTime.ParseExact(item.DateStartTime, "d/MM/yyyy H:mm", CultureInfo.InvariantCulture).Date;
-            bool isMatched = filter switch
+            string dateStartTime = reader.GetDateTime("DateStartTime").ToString("d/MM/yyyy H:mm", CultureInfo.InvariantCulture);
+            string title = reader.GetString("Title");
+            decimal cost = reader.GetDecimal("Cost");
+
+            EventDetail activity = reader.GetString("ActivityType") switch
             {
-                SearchFilter.before => eventDate < searchDate,
-                SearchFilter.on => eventDate == searchDate,
-                SearchFilter.after => eventDate > searchDate,
-                _ => false
+                "Fitness" => new FitnessEvent(dateStartTime, title, cost, reader.GetString("Location")),
+                "Entertainment" => new EntertainmentEvent(dateStartTime, title, cost, reader.GetInt32("MinParticipants")),
+                "Unknown" => throw new InvalidOperationException($"Unknown activity type")
             };
-            if (isMatched)
-            {
-                results.Add(item);
-            }
+            results.Add(activity);
         }
-
-
-
-        return results.OrderByDescending(e => DateTime.ParseExact(e.DateStartTime, "d/MM/yyyy H:mm", CultureInfo.InvariantCulture)).ToList();
+        return null;
     }
 
-    /// <summary>
-    /// Ultils to get path to csv files
-    /// </summary>
-    /// <param name="folderName"></param>
-    /// <returns></returns>
+
     private static string GetPathToProjectFolder(string folderName)
     {
         // Get the base directory for the project.  This defaults to where the compiled code is

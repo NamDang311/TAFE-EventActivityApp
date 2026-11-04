@@ -9,12 +9,12 @@ namespace EventActivityApp.Data;
 public class DbTest
 {
     [Fact]
-    public async Task CanConnectToDatabase()
+    public void CanConnectToDatabase()
     {
-        await using var conn = await Db.OpenConnectionAsync();
-        await using var cmd = conn.CreateCommand();
+        using var conn = new Db().OpenConnection();
+        using var cmd = conn.CreateCommand();
         cmd.CommandText = "SELECT 1";
-        Assert.Equal(1, Convert.ToInt32(await cmd.ExecuteScalarAsync()));
+        Assert.Equal(1, Convert.ToInt32(cmd.ExecuteScalar()));
     }
 
 }

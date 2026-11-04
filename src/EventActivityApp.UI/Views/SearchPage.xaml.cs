@@ -40,20 +40,21 @@ namespace myapp.Views
             try
             {
                 var results = new List<EventDetail>();
+                var allEvents = _repo.ReadAllCsv();
 
-                if (DateFilterRadioBefore.IsChecked == true)
-                {
-                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.before, _repo.ReadAllCsv()));
-                }
-                else if (DateFilterRadioOn.IsChecked == true)
-                {
-                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.on, _repo.ReadAllCsv()));
-                }
-                else if (DateFilterRadioAfter.IsChecked == true
-                )
-                {
-                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.after, _repo.ReadAllCsv()));
-                }
+                //if (DateFilterRadioBefore.IsChecked == true)
+                //{
+                //    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.before, allEvents));
+                //}
+                //else if (DateFilterRadioOn.IsChecked == true)
+                //{
+                //    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.on, allEvents));
+                //}
+                //else if (DateFilterRadioAfter.IsChecked == true
+                //)
+                //{
+                //    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.after, allEvents));
+                //}
 
 
                 if (results.Count == 0)
