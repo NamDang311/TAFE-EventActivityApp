@@ -36,10 +36,11 @@ namespace EventActivityApp.UI.Views
                 return;
             }
 
-            //Create a new FitnessEvent object
+            //Create a new FitnessActivity object
             try
             {
-                var eventDetail = new EventActivityApp.Domain.FitnessEvent($"{values[0]} {values[1]}", (string)values[2], (decimal)values[3], (string)values[4]);
+
+                var eventDetail = new EventActivityApp.Domain.FitnessActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (string)values[3]);
                 // Write to csv
                 _repo.WriteCsv(eventDetail, EventType.fitness);
                 MessageBox.Show($"Event saved:\n" +
@@ -63,7 +64,8 @@ namespace EventActivityApp.UI.Views
             // Create a new EventDetail object
             try
             {
-                var eventDetail = new EventActivityApp.Domain.EntertainmentEvent($"{values[0]} {values[1]}", (string)values[2], (decimal)values[3], (int)values[4]);
+
+                var eventDetail = new EventActivityApp.Domain.EntertainmentActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (int)values[3]);
                 // Write to csv
                 _repo.WriteCsv(eventDetail, EventType.entertainment);
                 MessageBox.Show($"Event saved:\n" +
@@ -86,7 +88,20 @@ namespace EventActivityApp.UI.Views
                 return null;
             }
             DateTime dateValue = DateTextBox.SelectedDate.Value;
-            string date = dateValue.ToString("d/MM/yyyy");
+
+            // Confirm before saving an event dated in the past
+            if (dateValue.Date < DateTime.Today)
+            {
+                var confirm = MessageBox.Show(
+                    $"The selected date {dateValue:d/MM/yyyy} is in the past. Do you want to continue?",
+                    "Are you sure?", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+                if (confirm != MessageBoxResult.OK)
+                {
+                    DateTextBox.Focus();
+                    return null;
+                }
+            }
+            DateTime date = dateValue;
 
             // Validate time picker if empty or not in correct format
             if (!TimeSpan.TryParseExact(TimeTextBox.Text.Trim(), @"h\:mm", CultureInfo.InvariantCulture, out TimeSpan parsed))
@@ -96,7 +111,7 @@ namespace EventActivityApp.UI.Views
                 return null;
             }
 
-            string time = parsed.ToString(@"h\:mm");
+            TimeSpan time = parsed;
 
             // Validate title if empty
             if (string.IsNullOrWhiteSpace(TitleTextBox.Text))
@@ -130,20 +145,20 @@ namespace EventActivityApp.UI.Views
 
                 string location = FitnessLocationTextBox.Text;
 
-                return [date, time, title, cost, location];
+                return [date + time, title, cost, location];
             }
             else
             {
                 // Validate location if empty
                 int minParticipant;
-                if (!int.TryParse(MinParticipantTextBox.Text, out minParticipant) || minParticipant < 0)
+                if (!int.TryParse(MinParticipantTextBox.Text, out minParticipant) || minParticipant < 2)
                 {
-                    MessageBox.Show("Please enter a valid number.", "Min Participant Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Please enter a valid number. Min participants is 2.", "Min Participant Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     MinParticipantTextBox.Focus();
                     return null;
                 }
 
-                return [date, time, title, cost, minParticipant];
+                return [date + time, title, cost, minParticipant];
             }
         }
 

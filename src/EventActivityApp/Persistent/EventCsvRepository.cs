@@ -21,6 +21,8 @@ public enum SearchFilter
 
 public class EventCsvRepository
 {
+    private const string CsvDateFormat = "d/MM/yyyy H:mm";
+
     public Db Db = new Db();
     private string GetFileName(EventType type) => type switch
     {
@@ -44,11 +46,11 @@ public class EventCsvRepository
         var results = new List<EventDetail>();
         if (type is EventType.fitness)
         {
-            results.AddRange(ReadFile<FitnessEvent>("FitnessActivities.CSV"));
+            results.AddRange(ReadFile<FitnessActivity>("FitnessActivities.CSV"));
         }
         else if (type is EventType.entertainment)
         {
-            results.AddRange(ReadFile<EntertainmentEvent>("EntertainmentActivities.CSV"));
+            results.AddRange(ReadFile<EntertainmentActivity>("EntertainmentActivities.CSV"));
         }
         else
         {
@@ -105,6 +107,8 @@ public class EventCsvRepository
         using (var reader = new StreamReader(_filePath))
         using (var csv = new CsvReader(reader, config))
         {
+            // Records are built through constructors, so [Format] on the property is ignored
+            csv.Context.TypeConverterOptionsCache.GetOptions<DateTime>().Formats = [CsvDateFormat];
 
             return csv.GetRecords<T>().ToList();
         }
@@ -123,8 +127,9 @@ public class EventCsvRepository
             };
             using (var csv = new CsvWriter(writer, config))
             {
-                csv.Context.RegisterClassMap<FitnessEventMap>();
-                csv.Context.RegisterClassMap<EntertainmentEventMap>();
+                csv.Context.TypeConverterOptionsCache.GetOptions<DateTime>().Formats = [CsvDateFormat];
+    csv.Context.RegisterClassMap<FitnessActivityMap>();
+                csv.Context.RegisterClassMap<EntertainmentActivityMap>();
                 csv.WriteRecord(record);
                 csv.NextRecord();
             }
@@ -166,22 +171,30 @@ public class EventCsvRepository
         using var reader = command.ExecuteReader();
         while (reader.Read())
         {
-            string dateStartTime = reader.GetDateTime("DateStartTime").ToString("d/MM/yyyy H:mm", CultureInfo.InvariantCulture);
-            string title = reader.GetString("Title");
-            decimal cost = reader.GetDecimal("Cost");
-
-            EventDetail activity = reader.GetString("ActivityType") switch
+            DateTime eventDate = item.DateStartTime.Date;
+            bool isMatched = filter switch
             {
-                "Fitness" => new FitnessEvent(dateStartTime, title, cost, reader.GetString("Location")),
-                "Entertainment" => new EntertainmentEvent(dateStartTime, title, cost, reader.GetInt32("MinParticipants")),
-                "Unknown" => throw new InvalidOperationException($"Unknown activity type")
+                SearchFilter.before => eventDate < searchDate,
+                SearchFilter.on => eventDate == searchDate,
+                SearchFilter.after => eventDate > searchDate,
+                _ => false
             };
-            results.Add(activity);
+            if (isMatched)
+            {
+                results.Add(item);
+            }
         }
-        return null;
+
+
+
+        return results.OrderByDescending(e => e.DateStartTime).ToList();
     }
 
-
+    /// <summary>
+    /// Ultils to get path to csv files
+    /// </summary>
+    /// <param name="folderName"></param>
+    /// <returns></returns>
     private static string GetPathToProjectFolder(string folderName)
     {
         // Get the base directory for the project.  This defaults to where the compiled code is
