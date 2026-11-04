@@ -77,7 +77,7 @@ public class EventCsvRepositoryTest
     {
         string path = Path.Combine(_repo.DataFolder, "FitnessActivities.CSV");
         string original = File.ReadAllText(path);
-        var event1 = new EventActivityApp.Domain.FitnessEvent("28/10/2026", "Swimming", 3, "Liverpool Center");
+        var event1 = new EventActivityApp.Domain.FitnessActivity(new DateTime(2026, 10, 28, 1, 0, 0), "Swimming", 3, "Liverpool Center");
         string[] lastLine;
 
         try
@@ -86,7 +86,7 @@ public class EventCsvRepositoryTest
             _repo.WriteCsv(event1, EventType.fitness);
             lastLine = File.ReadAllLines(path);
             Assert.Equal(
-                "28/10/2026,Swimming,3,Liverpool Center", lastLine[^1]);
+                "28/10/2026 1:00,Swimming,3,Liverpool Center", lastLine[^1]);
 
         }
 
@@ -101,7 +101,7 @@ public class EventCsvRepositoryTest
     {
         string path = Path.Combine(_repo.DataFolder, "EntertainmentActivities.CSV");
         string original = File.ReadAllText(path);
-        var event1 = new EventActivityApp.Domain.EntertainmentEvent("28/10/2026", "Chess", 3, 1);
+        var event1 = new EventActivityApp.Domain.EntertainmentActivity(new DateTime(2026, 10, 28, 1, 0, 0), "Chess", 3, 2);
         string[] lastLine;
 
         try
@@ -109,7 +109,7 @@ public class EventCsvRepositoryTest
             _repo.WriteCsv(event1, EventType.entertainment);
             lastLine = File.ReadAllLines(path);
             Assert.Equal(
-                "28/10/2026,Chess,3,1", lastLine[^1]);
+                "28/10/2026 1:00,Chess,3,2", lastLine[^1]);
 
         }
 
@@ -127,9 +127,9 @@ public class EventCsvRepositoryTest
     {
         var data = new List<EventDetail>
     {
-        new FitnessEvent("29/10/2026 9:00", "Running", 0, "Sydney Park"),
-        new FitnessEvent("30/10/2026 6:23", "Yoga", 12, "Mt Pritchard"),
-        new FitnessEvent("31/10/2026 8:00", "Swimming", 10, "Bondi Beach"),
+        new FitnessActivity(new DateTime(2026, 10, 29, 9, 0, 0), "Running", 0, "Sydney Park"),
+        new FitnessActivity(new DateTime(2026, 10, 30, 6, 23, 0), "Yoga", 12, "Mt Pritchard"),
+        new FitnessActivity(new DateTime(2026, 10, 31, 8, 0, 0), "Swimming", 10, "Bondi Beach"),
     };
 
         var results = _repo.SearchEvent(new DateTime(2026, 10, 30), filter, data);
