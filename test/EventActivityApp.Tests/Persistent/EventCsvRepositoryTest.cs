@@ -187,6 +187,24 @@ public class EventCsvRepositoryTest
         Assert.Contains(results, item => item.Title == event1.Title && item.DateStartTime == event1.DateStartTime);
     }
 
+    // [Theory]
+    // [InlineData(SearchFilter.before, "Running")]
+    // [InlineData(SearchFilter.on, "Yoga")]
+    // [InlineData(SearchFilter.after, "Swimming")]
+    // public void SearchEvent_ReturnsEventsMatchingFilter(SearchFilter filter, string expectedTitle)
+    // {
+    //     var data = new List<EventDetail>
+    // {
+    //     new FitnessActivity(new DateTime(2026, 10, 29, 9, 0, 0), "Running", 0, "Sydney Park"),
+    //     new FitnessActivity(new DateTime(2026, 10, 30, 6, 23, 0), "Yoga", 12, "Mt Pritchard"),
+    //     new FitnessActivity(new DateTime(2026, 10, 31, 8, 0, 0), "Swimming", 10, "Bondi Beach"),
+    // };
+
+    //     var results = _repo.SearchEvent(new DateTime(2026, 10, 30), filter, data);
+
+    //     Assert.Equal(expectedTitle, Assert.Single(results).Title);
+    // }
+
     [Theory]
     [InlineData("2026-11-07", SearchFilter.on, new string[] { "Karaoke" })]
     [InlineData("2025-03-08", SearchFilter.before, new string[] { "Walking", "Running" })]
