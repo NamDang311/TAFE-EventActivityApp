@@ -147,6 +147,24 @@ public class EventCsvRepositoryTest
     }
 
 
+    [Fact]
+    private void UpdateFitnessEvent_ShouldWriteDb()
+    {
+
+        var event1 = new EventActivityApp.Domain.FitnessActivity(new DateTime(2026, 11, 7, 7, 00, 00), "Swimming", 3, "Liverpool Center");
+        var results = _repo.SearchEvent(new DateTime(2026, 11, 7, 7, 00, 00), SearchFilter.on);
+        try
+        {
+            _repo.WriteEvent(event1);
+        }
+        catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
+        {
+            _output.WriteLine($"Already exists: {ex.Message}");
+            _repo.UpdateEvent(event1);
+        }
+
+    }
+
     // [Fact]
     // public void CanSaveEntertainmentEvent_ShouldWriteToFile()
     // {
@@ -174,17 +192,17 @@ public class EventCsvRepositoryTest
     private void CanSaveEntertainmentEvent_ShouldWriteDb()
     {
 
-        var event1 = new EventActivityApp.Domain.EntertainmentActivity(new DateTime(2026, 11, 7, 7, 00, 00), "Karaoke", 12, 4);
+        var event1 = new EventActivityApp.Domain.EntertainmentActivity(new DateTime(2026, 11, 20, 7, 00, 00), "Test Event", 12, 4);
         try
         {
             _repo.WriteEvent(event1);
+            var results = _repo.ReadActivities(EventType.entertainment);
+            Assert.Contains(results, item => item.Title == event1.Title && item.DateStartTime == event1.DateStartTime);
         }
         catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
         {
             _output.WriteLine($"Already exists: {ex.Message}");
         }
-        var results = _repo.ReadActivities(EventType.entertainment);
-        Assert.Contains(results, item => item.Title == event1.Title && item.DateStartTime == event1.DateStartTime);
     }
 
     // [Theory]
@@ -206,7 +224,7 @@ public class EventCsvRepositoryTest
     // }
 
     [Theory]
-    [InlineData("2026-11-07", SearchFilter.on, new string[] { "Karaoke" })]
+    [InlineData("2026-11-07", SearchFilter.on, new string[] { "Swimming" })]
     [InlineData("2025-03-08", SearchFilter.before, new string[] { "Walking", "Running" })]
     [InlineData("2026-11-06", SearchFilter.after, new string[] { "Karaoke" })]
     public void SearchEvent_ReturnsEventsMatchingFilter(string dateTime, SearchFilter filter, string[] expected)

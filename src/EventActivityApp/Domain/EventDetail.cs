@@ -1,10 +1,13 @@
 using System;
+using System.Data.Common;
+using System.Diagnostics;
 using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
 namespace EventActivityApp.Domain;
 
 public abstract class EventDetail
 {
+    public int ActivityID { get; set; }
     public DateTime DateStartTime { get; set; }
     public string Title
     {

@@ -3,6 +3,8 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
+using MySqlConnector;
+using EventActivityApp.Domain;
 
 
 
@@ -36,20 +38,32 @@ namespace EventActivityApp.UI.Views
                 return;
             }
 
-            //Create a new FitnessActivity object
+            EventDetail? newEventDetail = null;
             try
             {
-
-                var eventDetail = new EventActivityApp.Domain.FitnessActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (string)values[3]);
-                // Write to csv
-                _repo.WriteEvent(eventDetail);
+                //Capture input values into Fitness object
+                newEventDetail = new EventActivityApp.Domain.FitnessActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (string)values[3]);
+                // Write to db
+                _repo.WriteEvent(newEventDetail);
+                // Confirmation of writing
                 MessageBox.Show($"Event saved:\n" +
-                    $"{eventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+                    $"{newEventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
 
             }
-            catch (ArgumentException ex)
+            // catch (ArgumentException ex)
+            // {
+            //     MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            // }
+
+            // Catch duplicate entry
+            catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ShowMsgBoxForReplacing(newEventDetail!);
+            }
+            // Catch everything else
+            catch
+            {
+                MessageBox.Show("Something went wrong", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -62,20 +76,45 @@ namespace EventActivityApp.UI.Views
                 return;
             }
             // Create a new EventDetail object
+            EventDetail? newEventDetail = null;
             try
             {
 
-                var eventDetail = new EventActivityApp.Domain.EntertainmentActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (int)values[3]);
-                // Write to csv
-                _repo.WriteEvent(eventDetail);
+                newEventDetail = new EventActivityApp.Domain.EntertainmentActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (int)values[3]);
+
+                // Write to db
+                _repo.WriteEvent(newEventDetail);
                 MessageBox.Show($"Event saved:\n" +
-                    $"{eventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+                    $"{newEventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
 
             }
-            catch (ArgumentException ex)
+            // catch (ArgumentException ex)
+            // {
+            //     MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            // }
+
+            // Catch duplicate entry
+            catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ShowMsgBoxForReplacing(newEventDetail!);
             }
+            // Catch everything else
+            catch
+            {
+                MessageBox.Show("Something went wrong", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ShowMsgBoxForReplacing(EventDetail record)
+        {
+            MessageBoxResult mb = MessageBox.Show($"There is already an existing event on the selected date. Do you want to replace the event?",
+                    "Unable to Save Event", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+            if (mb == MessageBoxResult.Yes)
+            {
+                _repo.UpdateEvent(record);
+            }
+
         }
 
         private List<object>? ValidateTextInput(string type)

@@ -105,7 +105,7 @@ public class EventCsvRepository
             string title = reader.GetString("Title");
             decimal cost = reader.GetDecimal("Cost");
 
-
+            // Check activityType to map new object.
             EventDetail activity = reader.GetString("ActivityType") switch
             {
                 "Fitness" => new FitnessActivity(dateStartTime, title, cost, reader.GetString("Location")),
@@ -113,7 +113,6 @@ public class EventCsvRepository
                 _ => throw new InvalidOperationException($"Unknown activity type")
             };
             results.Add(activity);
-
         }
 
         return results;
@@ -191,6 +190,39 @@ public class EventCsvRepository
         command.ExecuteNonQuery();
     }
 
+    public void UpdateEvent(EventDetail record)
+    {
+        var refKey = SearchEvent(record.DateStartTime, SearchFilter.on);
+        if (refKey.Count == 1)
+        {
+            using var connection = Db.OpenConnection();
+            using var command = connection.CreateCommand();
+            command.CommandText = "UpdateActivityWithTypeCheck";
+            command.CommandType = System.Data.CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("p_ActivityID", refKey[^1].ActivityID);
+            command.Parameters.AddWithValue("p_NewDateStartTime", record.DateStartTime);
+            command.Parameters.AddWithValue("p_NewTitle", record.Title);
+            command.Parameters.AddWithValue("p_NewCost", record.Cost);
+            switch (record)
+            {
+                case FitnessActivity fitness:
+                    command.Parameters.AddWithValue("p_Location", fitness.Location);
+                    command.Parameters.AddWithValue("p_NewType", "Fitness");
+                    command.Parameters.AddWithValue("p_MinParticipants", DBNull.Value);
+                    break;
+                case EntertainmentActivity entertainment:
+                    command.Parameters.AddWithValue("p_Location", DBNull.Value);
+                    command.Parameters.AddWithValue("p_NewType", "Entertainment");
+                    command.Parameters.AddWithValue("p_MinParticipants", entertainment.MinParticipants);
+
+                    break;
+                default:
+                    throw new InvalidOperationException("Invalid event type.");
+            }
+            command.ExecuteNonQuery();
+        }
+    }
+
     // public List<EventDetail> SearchEvent(DateTime searchDate, SearchFilter filter, List<EventDetail> data)
     // {
     //     var results = new List<EventDetail>();
@@ -228,14 +260,25 @@ public class EventCsvRepository
             DateTime dateStartTime = reader.GetDateTime("DateStartTime");
             string title = reader.GetString("Title");
             decimal cost = reader.GetDecimal("Cost");
+            Int32 id = reader.GetInt32("ActivityID");
 
-            // Since DB doesn't return activity type, this is a way around.
+            /** 
+            Since DB procedure doesn't return activity type, this is a way around. 
+            check if whether the return reader location col is not null
+            if YES => Create FitnessActivity
+            else => Create EntertainmentActivity
+            ----
+            Optional: Retrive ActivityID as part of query to map later.
+            */
             EventDetail activity = !reader.IsDBNull(reader.GetOrdinal("Location"))
             ? new FitnessActivity(dateStartTime, title, cost, reader.GetString("Location"))
             : new EntertainmentActivity(dateStartTime, title, cost, reader.GetInt16("MinParticipants"));
+            activity.ActivityID = id;
             results.Add(activity);
 
         }
+
+        // Re-sort the result list.
         return results.OrderByDescending(e => e.DateStartTime).ToList();
 
     }
