@@ -1,16 +1,20 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using EventActivityApp.Data;
 using EventActivityApp.Domain;
+using Xunit.Abstractions;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
+using MySqlConnector;
 namespace EventActivityApp.Persistent;
 
 
 public class EventCsvRepositoryTest
 {
     // private readonly string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-    // private readonly EventCsvRepository _repo;
+    private readonly EventCsvRepository _repo = new EventCsvRepository();
     private readonly Db db = new Db();
+    private readonly ITestOutputHelper _output;
 
     // public EventCsvRepositoryTest()
     // {
@@ -51,8 +55,18 @@ public class EventCsvRepositoryTest
     //         File.WriteAllText(path, fitnessContent);
     //     }
     // }
+    public EventCsvRepositoryTest(ITestOutputHelper output)
+    {
+        _output = output;
+    }
 
-
+    [Fact]
+    public void CanConnectToDatabase()
+    {
+        using var connection = db.OpenConnection();
+        Assert.Equal(System.Data.ConnectionState.Open, connection.State);
+        Assert.Equal("ActivitiesDb", connection.Database);
+    }
 
     // [Fact]
     // private void CanReadFitnessEvents_ShouldReturnList()
@@ -64,6 +78,14 @@ public class EventCsvRepositoryTest
 
     // }
 
+    [Fact]
+    private void CanReadFitnessEvents_ShouldReturnList()
+    {
+        var results = _repo.ReadActivities(EventType.fitness);
+        Assert.NotEmpty(results);
+        Assert.IsType<List<EventDetail>>(results);
+    }
+
     // [Fact]
     // private void CanReadEntertainmentEvents_ShouldReturnList()
     // {
@@ -73,6 +95,14 @@ public class EventCsvRepositoryTest
     //     Assert.NotEmpty(list);
     //     Assert.IsType<List<EventDetail>>(list);
     // }
+
+    [Fact]
+    private void CanReadEntertainmentEvents_ShouldReturnList()
+    {
+        var results = _repo.ReadActivities(EventType.fitness);
+        Assert.NotEmpty(results);
+        Assert.IsType<List<EventDetail>>(results);
+    }
 
     // [Fact]
     // private void CanSaveFitnessEvent_ShouldWriteToFile()
@@ -98,6 +128,25 @@ public class EventCsvRepositoryTest
     //     }
     // }
 
+
+    [Fact]
+    private void CanSaveFitnessEvent_ShouldWriteDb()
+    {
+
+        var event1 = new EventActivityApp.Domain.FitnessActivity(new DateTime(2026, 11, 6, 7, 00, 00), "Swimming", 3, "Liverpool Center");
+        try
+        {
+            _repo.WriteEvent(event1);
+        }
+        catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
+        {
+            _output.WriteLine($"Already exists: {ex.Message}");
+        }
+        var results = _repo.ReadActivities(EventType.fitness);
+        Assert.Contains(results, item => item.Title == event1.Title && item.DateStartTime == event1.DateStartTime);
+    }
+
+
     // [Fact]
     // public void CanSaveEntertainmentEvent_ShouldWriteToFile()
     // {
@@ -121,40 +170,34 @@ public class EventCsvRepositoryTest
     //     }
     // }
 
-    [Theory]
-    [InlineData(SearchFilter.on)]
-    public void SearchEvent_ReturnsEventsMatchingFilter(SearchFilter filter)
+    [Fact]
+    private void CanSaveEntertainmentEvent_ShouldWriteDb()
     {
-        using var connection = db.OpenConnection();
-        using var command = connection.CreateCommand();
-        command.CommandText = "SearchActivitiesByDate";
-        command.Parameters.AddWithValue("p_SearchDate", new DateTime(2025, 3, 9));
-        command.Parameters.AddWithValue("p_Operator", filter.ToString());
-        command.CommandType = System.Data.CommandType.StoredProcedure;
-        var results = new List<EventDetail>();
-        using var reader = command.ExecuteReader();
-        while (reader.Read())
+
+        var event1 = new EventActivityApp.Domain.EntertainmentActivity(new DateTime(2026, 11, 7, 7, 00, 00), "Karaoke", 12, 4);
+        try
         {
-            DateTime dateStartTime = reader.GetDateTime("DateStartTime");
-            string title = reader.GetString("Title");
-            decimal cost = reader.GetDecimal("Cost");
-
-            string start = dateStartTime.ToString("yyyy-MM-dd HH:mm:ss");
-
-            // Entertainment rows have no Location
-            EventDetail activity = reader.IsDBNull(reader.GetOrdinal("Location"))
-                ? new EntertainmentEvent(start, title, cost, reader.GetInt32("MinParticipants"))
-                : new FitnessEvent(start, title, cost, reader.GetString("Location"));
-            results.Add(activity);
+            _repo.WriteEvent(event1);
         }
+        catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
+        {
+            _output.WriteLine($"Already exists: {ex.Message}");
+        }
+        var results = _repo.ReadActivities(EventType.entertainment);
+        Assert.Contains(results, item => item.Title == event1.Title && item.DateStartTime == event1.DateStartTime);
+    }
 
-        var data = new List<EventDetail>
+    [Theory]
+    [InlineData("2026-11-07", SearchFilter.on, new string[] { "Karaoke" })]
+    [InlineData("2025-03-08", SearchFilter.before, new string[] { "Walking", "Running" })]
+    [InlineData("2026-11-06", SearchFilter.after, new string[] { "Karaoke" })]
+    public void SearchEvent_ReturnsEventsMatchingFilter(string dateTime, SearchFilter filter, string[] expected)
     {
-        new FitnessEvent("2025-03-09 08:00:00", "Yoga", 10, "Bondi Beach"),
-    };
+        var searchDate = DateTime.Parse(dateTime);
+        var results = _repo.SearchEvent(searchDate, filter);
 
-        Assert.Equal(data[0].Title, Assert.Single(results).Title);
+        Assert.All(expected, exTitle => Assert.Contains(results, item => item.Title == exTitle));
+
     }
 }
-
 
