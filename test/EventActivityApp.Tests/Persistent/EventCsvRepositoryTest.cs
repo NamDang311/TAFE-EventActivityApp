@@ -81,7 +81,7 @@ public class EventCsvRepositoryTest
     [Fact]
     private void CanReadFitnessEvents_ShouldReturnList()
     {
-        var results = _repo.ReadActivities(EventType.fitness);
+        var results = _repo.ReadActivitiesbyType(EventType.fitness);
         Assert.NotEmpty(results);
         Assert.IsType<List<EventDetail>>(results);
     }
@@ -99,7 +99,7 @@ public class EventCsvRepositoryTest
     [Fact]
     private void CanReadEntertainmentEvents_ShouldReturnList()
     {
-        var results = _repo.ReadActivities(EventType.fitness);
+        var results = _repo.ReadActivitiesbyType(EventType.fitness);
         Assert.NotEmpty(results);
         Assert.IsType<List<EventDetail>>(results);
     }
@@ -133,7 +133,7 @@ public class EventCsvRepositoryTest
     private void CanSaveFitnessEvent_ShouldWriteDb()
     {
 
-        var event1 = new EventActivityApp.Domain.FitnessActivity(new DateTime(2026, 11, 6, 7, 00, 00), "Swimming", 3, "Liverpool Center");
+        var event1 = new EventActivityApp.Domain.FitnessActivity(new DateTime(2027, 12, 30, 7, 00, 00), "Test Fitness Event", 3, "Liverpool Center");
         try
         {
             _repo.WriteEvent(event1);
@@ -142,16 +142,16 @@ public class EventCsvRepositoryTest
         {
             _output.WriteLine($"Already exists: {ex.Message}");
         }
-        var results = _repo.ReadActivities(EventType.fitness);
+        var results = _repo.ReadActivitiesbyType(EventType.fitness);
         Assert.Contains(results, item => item.Title == event1.Title && item.DateStartTime == event1.DateStartTime);
     }
 
 
     [Fact]
-    private void UpdateFitnessEvent_ShouldWriteDb()
+    private void UpdateFitnessEvent_ShouldUpdateDb()
     {
 
-        var event1 = new EventActivityApp.Domain.FitnessActivity(new DateTime(2026, 11, 7, 7, 00, 00), "Swimming", 3, "Liverpool Center");
+        var event1 = new EventActivityApp.Domain.FitnessActivity(new DateTime(2027, 12, 30, 7, 00, 00), "Test Fitness Event - Overwritten", 3, "Liverpool Center");
         var results = _repo.SearchEvent(new DateTime(2026, 11, 7, 7, 00, 00), SearchFilter.on);
         try
         {
@@ -159,7 +159,6 @@ public class EventCsvRepositoryTest
         }
         catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
         {
-            _output.WriteLine($"Already exists: {ex.Message}");
             _repo.UpdateEvent(event1);
         }
 
@@ -192,11 +191,11 @@ public class EventCsvRepositoryTest
     private void CanSaveEntertainmentEvent_ShouldWriteDb()
     {
 
-        var event1 = new EventActivityApp.Domain.EntertainmentActivity(new DateTime(2026, 11, 20, 7, 00, 00), "Test Event", 12, 4);
+        var event1 = new EventActivityApp.Domain.EntertainmentActivity(new DateTime(2026, 12, 31, 7, 00, 00), "Test Entertainment Event", 12, 4);
         try
         {
             _repo.WriteEvent(event1);
-            var results = _repo.ReadActivities(EventType.entertainment);
+            var results = _repo.ReadActivitiesbyType(EventType.entertainment);
             Assert.Contains(results, item => item.Title == event1.Title && item.DateStartTime == event1.DateStartTime);
         }
         catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
@@ -224,9 +223,9 @@ public class EventCsvRepositoryTest
     // }
 
     [Theory]
-    [InlineData("2026-11-07", SearchFilter.on, new string[] { "Swimming" })]
+    [InlineData("2025-03-01", SearchFilter.on, new string[] { "Walking" })]
     [InlineData("2025-03-08", SearchFilter.before, new string[] { "Walking", "Running" })]
-    [InlineData("2026-11-06", SearchFilter.after, new string[] { "Karaoke" })]
+    [InlineData("2026-12-30", SearchFilter.after, new string[] { "Test Entertainment Event" })]
     public void SearchEvent_ReturnsEventsMatchingFilter(string dateTime, SearchFilter filter, string[] expected)
     {
         var searchDate = DateTime.Parse(dateTime);
@@ -235,5 +234,31 @@ public class EventCsvRepositoryTest
         Assert.All(expected, exTitle => Assert.Contains(results, item => item.Title == exTitle));
 
     }
+
+    // Positive
+    [Fact]
+    public void ReadEntertainmentEvents_ShouldReturnResults()
+    {
+        var results = _repo.ReadActivitiesbyType(EventType.entertainment);
+        Assert.NotEmpty(results);
+        Assert.All(results, item => Assert.IsType<EntertainmentActivity>(item));
+    }
+
+    // Negative
+    [Fact]
+    public void SearchEvent_NoEventsOnDate_ShouldReturnEmpty()
+    {
+        var results = _repo.SearchEvent(new DateTime(1900, 1, 1), SearchFilter.on);
+        Assert.Empty(results);
+    }
+
+    // Boundary
+    [Fact]
+    public void CostBelowZero_ShouldThrowsArgumentException()
+    {
+        var date = new DateTime(2027, 1, 1, 7, 0, 0);
+        Assert.Throws<ArgumentException>(() => new FitnessActivity(date, "Boundary Test", -0.01m, "Park"));
+    }
+
 }
 

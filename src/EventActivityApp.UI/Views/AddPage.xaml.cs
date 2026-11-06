@@ -33,21 +33,23 @@ namespace EventActivityApp.UI.Views
         {
             // Run a validation on the form inputs
             var values = ValidateTextInput("Fitness");
-            if (values is null)
-            {
-                return;
-            }
+            if (values is null) return;
 
             EventDetail? newEventDetail = null;
             try
             {
-                //Capture input values into Fitness object
-                newEventDetail = new EventActivityApp.Domain.FitnessActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (string)values[3]);
-                // Write to db
-                _repo.WriteEvent(newEventDetail);
-                // Confirmation of writing
-                MessageBox.Show($"Event saved:\n" +
-                    $"{newEventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (_repo.CheckEventExist((DateTime)values[0]))
+                {
+                    newEventDetail = new EventActivityApp.Domain.FitnessActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (string)values[3]);
+                    ShowMsgBoxForReplacing(newEventDetail);
+                }
+                else
+                {
+                    // Write to db
+                    _repo.WriteEvent(newEventDetail!);
+                    MessageBox.Show($"Event saved:\n" +
+                        $"{newEventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
 
             }
             // catch (ArgumentException ex)
@@ -55,11 +57,7 @@ namespace EventActivityApp.UI.Views
             //     MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             // }
 
-            // Catch duplicate entry
-            catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
-            {
-                ShowMsgBoxForReplacing(newEventDetail!);
-            }
+
             // Catch everything else
             catch
             {
@@ -71,21 +69,23 @@ namespace EventActivityApp.UI.Views
         {
             // Run a validation on the form inputs
             var values = ValidateTextInput("Entertainment");
-            if (values is null)
-            {
-                return;
-            }
+            if (values is null) return;
             // Create a new EventDetail object
             EventDetail? newEventDetail = null;
             try
             {
-
-                newEventDetail = new EventActivityApp.Domain.EntertainmentActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (int)values[3]);
-
-                // Write to db
-                _repo.WriteEvent(newEventDetail);
-                MessageBox.Show($"Event saved:\n" +
-                    $"{newEventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (_repo.CheckEventExist((DateTime)values[0]))
+                {
+                    newEventDetail = new EventActivityApp.Domain.EntertainmentActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (int)values[3]);
+                    ShowMsgBoxForReplacing(newEventDetail);
+                }
+                else
+                {
+                    // Write to db
+                    _repo.WriteEvent(newEventDetail!);
+                    MessageBox.Show($"Event saved:\n" +
+                        $"{newEventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
 
             }
             // catch (ArgumentException ex)
@@ -93,11 +93,8 @@ namespace EventActivityApp.UI.Views
             //     MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             // }
 
-            // Catch duplicate entry
-            catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
-            {
-                ShowMsgBoxForReplacing(newEventDetail!);
-            }
+
+
             // Catch everything else
             catch
             {
@@ -113,6 +110,8 @@ namespace EventActivityApp.UI.Views
             if (mb == MessageBoxResult.Yes)
             {
                 _repo.UpdateEvent(record);
+                MessageBox.Show($"Event saved:\n" +
+                       $"{record}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
         }

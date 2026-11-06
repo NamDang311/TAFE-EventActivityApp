@@ -35,23 +35,27 @@ public class EventCsvRepository
     // public string _filePath = "";
 
 
-    public List<EventDetail> ReadActivities(EventType type)
+    // public List<EventDetail> ReadCsv(EventType type)
+    // {
+    //     _filePath = Path.Combine(DataFolder, GetFileName(type));
+    //     var results = new List<EventDetail>();
+    //     if (type is EventType.fitness)
+    //     {
+    //         results.AddRange(ReadFile<FitnessActivity>("FitnessActivities.CSV"));
+    //     }
+    //     else if (type is EventType.entertainment)
+    //     {
+    //         results.AddRange(ReadFile<EntertainmentActivity>("EntertainmentActivities.CSV"));
+    //     }
+    //     else
+    //     {
+    //         throw new ArgumentOutOfRangeException("Invalid event type");
+    //     }
+    //     return results;
+    // }
+
+    public List<EventDetail> ReadActivitiesbyType(EventType type)
     {
-        // _filePath = Path.Combine(DataFolder, GetFileName(type));
-        // var results = new List<EventDetail>();
-        // if (type is EventType.fitness)
-        // {
-        //     results.AddRange(ReadFile<FitnessActivity>("FitnessActivities.CSV"));
-        // }
-        // else if (type is EventType.entertainment)
-        // {
-        //     results.AddRange(ReadFile<EntertainmentActivity>("EntertainmentActivities.CSV"));
-        // }
-        // else
-        // {
-        //     throw new ArgumentOutOfRangeException("Invalid event type");
-        // }
-        // return results;
         var results = new List<EventDetail>();
         using var connection = Db.OpenConnection();
         using var command = connection.CreateCommand();
@@ -85,7 +89,7 @@ public class EventCsvRepository
     public List<EventDetail> ReadAllActivities()
     {
 
-        /** Back up for old methods*/
+        /** old methods*/
         // var results = new List<EventDetail>();
         // results.AddRange(ReadCsv(EventType.fitness));
         // results.AddRange(ReadCsv(EventType.entertainment));
@@ -188,6 +192,20 @@ public class EventCsvRepository
         }
 
         command.ExecuteNonQuery();
+    }
+
+    public bool CheckEventExist(DateTime date)
+    {
+        using var connection = Db.OpenConnection();
+        using var command = connection.CreateCommand();
+        command.CommandText = "CheckActivityExistsByDate";
+        command.CommandType = System.Data.CommandType.StoredProcedure;
+        command.Parameters.AddWithValue("p_DateToCheck", date.Date);
+
+        using var reader = command.ExecuteReader();
+        reader.Read();                                   
+        int exists = reader.GetInt32("ActivityExists"); 
+        return exists == 1;
     }
 
     public void UpdateEvent(EventDetail record)
