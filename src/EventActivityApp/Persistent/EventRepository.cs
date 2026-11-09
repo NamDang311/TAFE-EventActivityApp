@@ -15,9 +15,14 @@ public enum SearchFilter
 {
     before, on, after
 }
+public class DataRepository
+{
+
+}
 
 
-public class EventCsvRepository
+
+public class DbRepository : DataRepository
 {
     public Db Db = new Db();
 

@@ -19,7 +19,7 @@ namespace EventActivityApp.UI.Views
         /// <summary>
         /// Provides access to the event CSV repository.
         /// </summary>
-        public EventCsvRepository _repo = new EventCsvRepository();
+        public DbRepository _repo = new DbRepository();
 
         /// <summary>
         /// Initializes a new instance of the AddPage class.

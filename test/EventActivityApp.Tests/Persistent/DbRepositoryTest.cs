@@ -9,20 +9,20 @@ using Xunit.Abstractions;
 namespace EventActivityApp.Persistent;
 
 // TODO: Db as a subclass
-public class EventCsvRepositoryTest
+public class DbRepositoryTest
 {
     // private readonly string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-    private readonly EventCsvRepository _repo = new EventCsvRepository();
+    private readonly DbRepository _repo = new DbRepository();
     private readonly Db db = new Db();
     private readonly ITestOutputHelper _output;
 
-    public EventCsvRepositoryTest(ITestOutputHelper output)
+    public DbRepositoryTest(ITestOutputHelper output)
     {
         _output = output;
     }
-    // public EventCsvRepositoryTest()
+    // public DbRepositoryTest()
     // {
-    //     _repo = new EventCsvRepository
+    //     _repo = new DbRepository
     //     {
     //         DataFolder = Path.Combine(
     //             baseDir, "..", "..", "..", "Data")
