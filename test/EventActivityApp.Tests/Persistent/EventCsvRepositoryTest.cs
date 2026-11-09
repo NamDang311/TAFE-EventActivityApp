@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using EventActivityApp.Data;
 using EventActivityApp.Domain;
-using Xunit.Abstractions;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using MySqlConnector;
 namespace EventActivityApp.Persistent;
 
@@ -14,7 +11,6 @@ public class EventCsvRepositoryTest
     // private readonly string baseDir = AppDomain.CurrentDomain.BaseDirectory;
     private readonly EventCsvRepository _repo = new EventCsvRepository();
     private readonly Db db = new Db();
-    private readonly ITestOutputHelper _output;
 
     // public EventCsvRepositoryTest()
     // {
@@ -55,10 +51,6 @@ public class EventCsvRepositoryTest
     //         File.WriteAllText(path, fitnessContent);
     //     }
     // }
-    public EventCsvRepositoryTest(ITestOutputHelper output)
-    {
-        _output = output;
-    }
 
     [Fact]
     public void CanConnectToDatabase()
@@ -133,14 +125,14 @@ public class EventCsvRepositoryTest
     private void CanSaveFitnessEvent_ShouldWriteDb()
     {
 
-        var event1 = new EventActivityApp.Domain.FitnessActivity(new DateTime(2027, 12, 30, 7, 00, 00), "Test Fitness Event", 3, "Liverpool Center");
+        var event1 = new EventActivityApp.Domain.FitnessActivity(new DateTime(2027, 12, 29, 7, 00, 00), "Test Fitness Event", 3, "Liverpool Center");
         try
         {
             _repo.WriteEvent(event1);
         }
-        catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
+        catch (MySqlException ex)
         {
-            _output.WriteLine($"Already exists: {ex.Message}");
+            Assert.Equal(MySqlErrorCode.DuplicateKeyEntry, ex.ErrorCode);
         }
         var results = _repo.ReadActivitiesbyType(EventType.fitness);
         Assert.Contains(results, item => item.Title == event1.Title && item.DateStartTime == event1.DateStartTime);
@@ -150,9 +142,8 @@ public class EventCsvRepositoryTest
     [Fact]
     private void UpdateFitnessEvent_ShouldUpdateDb()
     {
-
-        var event1 = new EventActivityApp.Domain.FitnessActivity(new DateTime(2027, 12, 30, 7, 00, 00), "Test Fitness Event - Overwritten", 3, "Liverpool Center");
-        var results = _repo.SearchEvent(new DateTime(2026, 11, 7, 7, 00, 00), SearchFilter.on);
+        var eventDate = new DateTime(2027, 12, 30, 7, 00, 00);
+        var event1 = new EventActivityApp.Domain.FitnessActivity(eventDate, "Test Fitness Event - Overwritten", 3, "Liverpool Center");
         try
         {
             _repo.WriteEvent(event1);
@@ -161,6 +152,11 @@ public class EventCsvRepositoryTest
         {
             _repo.UpdateEvent(event1);
         }
+
+        // Retrieve the event on the date.
+        var result = _repo.SearchEvent(eventDate, SearchFilter.on);
+
+        Assert.Contains(result, item => item.Title == event1.Title);
 
     }
 
@@ -198,9 +194,9 @@ public class EventCsvRepositoryTest
             var results = _repo.ReadActivitiesbyType(EventType.entertainment);
             Assert.Contains(results, item => item.Title == event1.Title && item.DateStartTime == event1.DateStartTime);
         }
-        catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
+        catch (MySqlException ex)
         {
-            _output.WriteLine($"Already exists: {ex.Message}");
+            Assert.Equal(MySqlErrorCode.DuplicateKeyEntry, ex.ErrorCode);
         }
     }
 
@@ -235,7 +231,7 @@ public class EventCsvRepositoryTest
 
     }
 
-    // Positive
+    // Positive test
     [Fact]
     public void ReadEntertainmentEvents_ShouldReturnResults()
     {
@@ -244,7 +240,7 @@ public class EventCsvRepositoryTest
         Assert.All(results, item => Assert.IsType<EntertainmentActivity>(item));
     }
 
-    // Negative
+    // Negative test
     [Fact]
     public void SearchEvent_NoEventsOnDate_ShouldReturnEmpty()
     {
@@ -252,7 +248,7 @@ public class EventCsvRepositoryTest
         Assert.Empty(results);
     }
 
-    // Boundary
+    // Boundary test
     [Fact]
     public void CostBelowZero_ShouldThrowsArgumentException()
     {
