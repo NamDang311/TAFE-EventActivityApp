@@ -25,3 +25,5 @@ CALL GetAllFitnessActivities ();
 CALL GetAllEntertainmentActivities ();
 
 CALL GetAllActivities ();
+
+CALL SearchActivitiesByDate ('2027-12-29', 'on')

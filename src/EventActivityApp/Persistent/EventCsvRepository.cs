@@ -203,8 +203,8 @@ public class EventCsvRepository
         command.Parameters.AddWithValue("p_DateToCheck", date.Date);
 
         using var reader = command.ExecuteReader();
-        reader.Read();                                   
-        int exists = reader.GetInt32("ActivityExists"); 
+        reader.Read();
+        int exists = reader.GetInt32("ActivityExists");
         return exists == 1;
     }
 
@@ -266,8 +266,8 @@ public class EventCsvRepository
     {
         var results = new List<EventDetail>();
         using var connection = Db.OpenConnection();
-        string query = "SearchActivitiesByDate";
-        using var command = new MySqlCommand(query, connection);
+        using var command = connection.CreateCommand();
+        command.CommandText = "SearchActivitiesByDate";
         command.CommandType = System.Data.CommandType.StoredProcedure;
         command.Parameters.AddWithValue("p_SearchDate", searchDate.Date);
         command.Parameters.AddWithValue("p_Operator", filter.ToString());
@@ -299,6 +299,15 @@ public class EventCsvRepository
         // Re-sort the result list.
         return results.OrderByDescending(e => e.DateStartTime).ToList();
 
+    }
+
+    public void DeleteEntry(int id)
+    {
+        using var connection = Db.OpenConnection();
+        using var command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM FitnessActivities WHERE ActivityID = @id; DELETE FROM EntertainmentActivities WHERE ActivityID = @id;DELETE FROM Activities WHERE ActivityID = @id;";
+        command.Parameters.AddWithValue("@id", id);
+        command.ExecuteNonQuery();
     }
 
     /// <summary>

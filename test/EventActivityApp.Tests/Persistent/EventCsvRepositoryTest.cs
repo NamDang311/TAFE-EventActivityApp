@@ -124,18 +124,24 @@ public class EventCsvRepositoryTest
     [Fact]
     private void CanSaveFitnessEvent_ShouldWriteDb()
     {
+        var eventDate = new DateTime(2027, 12, 29, 7, 00, 00);
 
-        var event1 = new EventActivityApp.Domain.FitnessActivity(new DateTime(2027, 12, 29, 7, 00, 00), "Test Fitness Event", 3, "Liverpool Center");
+        var event1 = new EventActivityApp.Domain.FitnessActivity(eventDate, "Test Fitness Event - Should be deleted", 3, "Liverpool Center");
         try
         {
             _repo.WriteEvent(event1);
+            var results = _repo.ReadActivitiesbyType(EventType.fitness);
+            Assert.Contains(results, item => item.Title == event1.Title && item.DateStartTime == event1.DateStartTime);
         }
         catch (MySqlException ex)
         {
             Assert.Equal(MySqlErrorCode.DuplicateKeyEntry, ex.ErrorCode);
         }
-        var results = _repo.ReadActivitiesbyType(EventType.fitness);
-        Assert.Contains(results, item => item.Title == event1.Title && item.DateStartTime == event1.DateStartTime);
+        finally
+        {
+            _repo.DeleteEntry(_repo.SearchEvent(eventDate, SearchFilter.on)[^1].ActivityID);
+        }
+
     }
 
 
@@ -151,12 +157,13 @@ public class EventCsvRepositoryTest
         catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
         {
             _repo.UpdateEvent(event1);
+            var result = _repo.SearchEvent(eventDate, SearchFilter.on);
+            Assert.Contains(result, item => item.Title == event1.Title);
         }
-
-        // Retrieve the event on the date.
-        var result = _repo.SearchEvent(eventDate, SearchFilter.on);
-
-        Assert.Contains(result, item => item.Title == event1.Title);
+        finally
+        {
+            _repo.DeleteEntry(_repo.SearchEvent(eventDate, SearchFilter.on)[^1].ActivityID);
+        }
 
     }
 
@@ -186,17 +193,22 @@ public class EventCsvRepositoryTest
     [Fact]
     private void CanSaveEntertainmentEvent_ShouldWriteDb()
     {
-
-        var event1 = new EventActivityApp.Domain.EntertainmentActivity(new DateTime(2026, 12, 31, 7, 00, 00), "Test Entertainment Event", 12, 4);
+        var eventDate = new DateTime(2026, 12, 31, 7, 00, 00);
+        var event1 = new EventActivityApp.Domain.EntertainmentActivity(eventDate, "Test Entertainment Event - Should be deleted", 12, 4);
         try
         {
             _repo.WriteEvent(event1);
             var results = _repo.ReadActivitiesbyType(EventType.entertainment);
             Assert.Contains(results, item => item.Title == event1.Title && item.DateStartTime == event1.DateStartTime);
         }
+
         catch (MySqlException ex)
         {
             Assert.Equal(MySqlErrorCode.DuplicateKeyEntry, ex.ErrorCode);
+        }
+        finally
+        {
+            _repo.DeleteEntry(_repo.SearchEvent(eventDate, SearchFilter.on)[^1].ActivityID);
         }
     }
 
