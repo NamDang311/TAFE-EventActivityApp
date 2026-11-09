@@ -20,6 +20,11 @@ public class DataRepository
 
 }
 
+public class CsvRepository : DataRepository
+{
+    
+}
+
 
 
 public class DbRepository : DataRepository

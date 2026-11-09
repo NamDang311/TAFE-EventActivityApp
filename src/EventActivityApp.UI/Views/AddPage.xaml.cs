@@ -35,19 +35,17 @@ namespace EventActivityApp.UI.Views
             var values = ValidateTextInput("Fitness");
             if (values is null) return;
 
-            EventDetail? newEventDetail = null;
+            EventDetail newEventDetail = new EventActivityApp.Domain.FitnessActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (string)values[3]);
             try
             {
                 // Check if there is an event on the selected date
                 if (_repo.CheckEventExist((DateTime)values[0]))
                 {
-                    newEventDetail = new EventActivityApp.Domain.FitnessActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (string)values[3]);
                     ShowMsgBoxForReplacing(newEventDetail);
                 }
                 else
                 {
-                    // Write to db
-                    newEventDetail = new EventActivityApp.Domain.FitnessActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (string)values[3]);
+                    // Confirm Write to db
                     _repo.WriteEvent(newEventDetail!);
                     MessageBox.Show($"Event saved:\n" +
                         $"{newEventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -73,20 +71,18 @@ namespace EventActivityApp.UI.Views
             var values = ValidateTextInput("Entertainment");
             if (values is null) return;
             // Create a new EventDetail object
-            EventDetail? newEventDetail = null;
+            EventDetail newEventDetail = new EntertainmentActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (int)values[3]);
             try
             {
                 // Check if there is an event on the selected date
                 if (_repo.CheckEventExist((DateTime)values[0]))
                 {
-                    newEventDetail = new EventActivityApp.Domain.EntertainmentActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (int)values[3]);
+
                     ShowMsgBoxForReplacing(newEventDetail);
                 }
                 else
                 {
-                    // Write to db
-                    newEventDetail = new EventActivityApp.Domain.EntertainmentActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (int)values[3]);
-                    _repo.WriteEvent(newEventDetail);
+                    // Confirm write to db
                     MessageBox.Show($"Event saved:\n" +
                         $"{newEventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -96,8 +92,6 @@ namespace EventActivityApp.UI.Views
             // {
             //     MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             // }
-
-
 
             // Catch everything else
             catch
