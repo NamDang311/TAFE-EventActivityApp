@@ -38,6 +38,7 @@ namespace EventActivityApp.UI.Views
             EventDetail? newEventDetail = null;
             try
             {
+                // Check if there is an event on the selected date
                 if (_repo.CheckEventExist((DateTime)values[0]))
                 {
                     newEventDetail = new EventActivityApp.Domain.FitnessActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (string)values[3]);
@@ -74,6 +75,7 @@ namespace EventActivityApp.UI.Views
             EventDetail? newEventDetail = null;
             try
             {
+                // Check if there is an event on the selected date
                 if (_repo.CheckEventExist((DateTime)values[0]))
                 {
                     newEventDetail = new EventActivityApp.Domain.EntertainmentActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (int)values[3]);
@@ -110,8 +112,7 @@ namespace EventActivityApp.UI.Views
             if (mb == MessageBoxResult.Yes)
             {
                 _repo.UpdateEvent(record);
-                MessageBox.Show($"Event saved:\n" +
-                       $"{record}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Event saved:\n" + $"{record}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
         }
@@ -170,9 +171,9 @@ namespace EventActivityApp.UI.Views
 
             // Validate cost if empty or incorrect format
             decimal cost;
-            if (!decimal.TryParse(CostTextBox.Text, out cost))
+            if (!decimal.TryParse(CostTextBox.Text, out cost) || cost < 0)
             {
-                MessageBox.Show("Please enter a valid number.", "Cost Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Cost must be 0 or more.", "Cost Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 CostTextBox.Focus();
                 return null;
             }
