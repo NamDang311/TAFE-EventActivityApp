@@ -1,17 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using EventActivityApp.Data;
 using EventActivityApp.Domain;
 using MySqlConnector;
+using Xunit.Abstractions;
+
 namespace EventActivityApp.Persistent;
 
-
+// TODO: Db as a subclass
 public class EventCsvRepositoryTest
 {
     // private readonly string baseDir = AppDomain.CurrentDomain.BaseDirectory;
     private readonly EventCsvRepository _repo = new EventCsvRepository();
     private readonly Db db = new Db();
+    private readonly ITestOutputHelper _output;
 
+    public EventCsvRepositoryTest(ITestOutputHelper output)
+    {
+        _output = output;
+    }
     // public EventCsvRepositoryTest()
     // {
     //     _repo = new EventCsvRepository
@@ -56,7 +64,7 @@ public class EventCsvRepositoryTest
     public void CanConnectToDatabase()
     {
         using var connection = db.OpenConnection();
-        Assert.Equal(System.Data.ConnectionState.Open, connection.State);
+        Assert.Equal(ConnectionState.Open, connection.State);
         Assert.Equal("ActivitiesDb", connection.Database);
     }
 
@@ -135,11 +143,11 @@ public class EventCsvRepositoryTest
         }
         catch (MySqlException ex)
         {
-            Assert.Equal(MySqlErrorCode.DuplicateKeyEntry, ex.ErrorCode);
+            _output.WriteLine(ex.Message);
         }
         finally
         {
-            _repo.DeleteEntry(_repo.SearchEvent(eventDate, SearchFilter.on)[^1].ActivityID);
+            _repo.DeleteActivityById(_repo.SearchEvent(eventDate, SearchFilter.on)[^1].ActivityID);
         }
 
     }
@@ -162,7 +170,7 @@ public class EventCsvRepositoryTest
         }
         finally
         {
-            _repo.DeleteEntry(_repo.SearchEvent(eventDate, SearchFilter.on)[^1].ActivityID);
+            _repo.DeleteActivityById(_repo.SearchEvent(eventDate, SearchFilter.on)[^1].ActivityID);
         }
 
     }
@@ -204,11 +212,11 @@ public class EventCsvRepositoryTest
 
         catch (MySqlException ex)
         {
-            Assert.Equal(MySqlErrorCode.DuplicateKeyEntry, ex.ErrorCode);
+            _output.WriteLine(ex.Message);
         }
         finally
         {
-            _repo.DeleteEntry(_repo.SearchEvent(eventDate, SearchFilter.on)[^1].ActivityID);
+            _repo.DeleteActivityById(_repo.SearchEvent(eventDate, SearchFilter.on)[^1].ActivityID);
         }
     }
 

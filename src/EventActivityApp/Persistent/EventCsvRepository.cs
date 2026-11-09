@@ -1,12 +1,8 @@
-using CsvHelper;
-using CsvHelper.Configuration;
 using EventActivityApp.Domain;
-using System.Globalization;
+using EventActivityApp.Data;
+
 namespace EventActivityApp.Persistent;
 
-using EventActivityApp.Data;
-using Microsoft.VisualBasic;
-using MySqlConnector;
 
 public enum EventType
 {
@@ -110,12 +106,18 @@ public class EventCsvRepository
             decimal cost = reader.GetDecimal("Cost");
 
             // Check activityType to map new object.
-            EventDetail activity = reader.GetString("ActivityType") switch
+            EventDetail activity;
+            switch (reader.GetString("ActivityType"))
             {
-                "Fitness" => new FitnessActivity(dateStartTime, title, cost, reader.GetString("Location")),
-                "Entertainment" => new EntertainmentActivity(dateStartTime, title, cost, reader.GetInt16("MinParticipants")),
-                _ => throw new InvalidOperationException($"Unknown activity type")
-            };
+                case "Fitness":
+                    activity = new FitnessActivity(dateStartTime, title, cost, reader.GetString("Location"));
+                    break;
+                case "Entertainment":
+                    activity = new EntertainmentActivity(dateStartTime, title, cost, reader.GetInt16("MinParticipants"));
+                    break;
+                default:
+                    throw new InvalidOperationException("Unknown activity type");
+            }
             results.Add(activity);
         }
 
@@ -210,7 +212,8 @@ public class EventCsvRepository
 
     public void UpdateEvent(EventDetail record)
     {
-        var refKey = SearchEvent(record.DateStartTime, SearchFilter.on);
+        // Check if there is an existing event on the date
+        List<EventDetail> refKey = SearchEvent(record.DateStartTime, SearchFilter.on);
         if (refKey.Count == 1)
         {
             using var connection = Db.OpenConnection();
@@ -232,7 +235,6 @@ public class EventCsvRepository
                     command.Parameters.AddWithValue("p_Location", DBNull.Value);
                     command.Parameters.AddWithValue("p_NewType", "Entertainment");
                     command.Parameters.AddWithValue("p_MinParticipants", entertainment.MinParticipants);
-
                     break;
                 default:
                     throw new InvalidOperationException("Invalid event type.");
@@ -286,14 +288,12 @@ public class EventCsvRepository
             if YES => Create FitnessActivity
             else => Create EntertainmentActivity
             ----
-            Optional: Retrive ActivityID as part of query to map later.
             */
             EventDetail activity = !reader.IsDBNull(reader.GetOrdinal("Location"))
             ? new FitnessActivity(dateStartTime, title, cost, reader.GetString("Location"))
             : new EntertainmentActivity(dateStartTime, title, cost, reader.GetInt16("MinParticipants"));
             activity.ActivityID = id;
             results.Add(activity);
-
         }
 
         // Re-sort the result list.
@@ -301,7 +301,7 @@ public class EventCsvRepository
 
     }
 
-    public void DeleteEntry(int id)
+    public void DeleteActivityById(int id)
     {
         using var connection = Db.OpenConnection();
         using var command = connection.CreateCommand();

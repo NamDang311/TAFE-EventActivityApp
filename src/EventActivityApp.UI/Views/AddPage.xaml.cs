@@ -47,6 +47,7 @@ namespace EventActivityApp.UI.Views
                 else
                 {
                     // Write to db
+                    newEventDetail = new EventActivityApp.Domain.FitnessActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (string)values[3]);
                     _repo.WriteEvent(newEventDetail!);
                     MessageBox.Show($"Event saved:\n" +
                         $"{newEventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -84,7 +85,8 @@ namespace EventActivityApp.UI.Views
                 else
                 {
                     // Write to db
-                    _repo.WriteEvent(newEventDetail!);
+                    newEventDetail = new EventActivityApp.Domain.EntertainmentActivity((DateTime)values[0], (string)values[1], (decimal)values[2], (int)values[3]);
+                    _repo.WriteEvent(newEventDetail);
                     MessageBox.Show($"Event saved:\n" +
                         $"{newEventDetail}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
