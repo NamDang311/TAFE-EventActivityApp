@@ -30,6 +30,11 @@
             MainWindow
             </summary>
         </member>
+        <member name="M:EventActivityApp.UI.MainWindow.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:EventActivityApp.UI.MainWindow"/> class.
+            </summary>
+        </member>
         <member name="M:EventActivityApp.UI.MainWindow.InitializeComponent">
             <summary>
             InitializeComponent

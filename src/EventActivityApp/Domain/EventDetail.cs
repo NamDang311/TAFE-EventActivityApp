@@ -1,14 +1,19 @@
-using System;
-using System.Data.Common;
-using System.Diagnostics;
-using CsvHelper.Configuration;
-using CsvHelper.Configuration.Attributes;
 namespace EventActivityApp.Domain;
 
+/// <summary>
+/// Base class for all events, holding the details every event type shares.
+/// </summary>
 public abstract class EventDetail
 {
     public int ActivityID { get; set; }
+    /// <summary>
+    /// Gets or sets the date and time the event starts.
+    /// </summary>
     public DateTime DateStartTime { get; set; }
+
+    /// <summary>
+    /// Gets or sets the title of the event.
+    /// </summary>
     public string Title
     {
         get; set
@@ -20,6 +25,11 @@ public abstract class EventDetail
             field = value;
         }
     }
+
+    /// <summary>
+    /// Gets or sets the cost of the event.
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown when the value is negative.</exception>
     public decimal Cost
     {
         get; set
@@ -29,75 +39,17 @@ public abstract class EventDetail
         }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EventDetail"/> class.
+    /// </summary>
+    /// <param name="dateStartTime">The date and time the event starts.</param>
+    /// <param name="title">The title of the event.</param>
+    /// <param name="cost">The cost of the event. Must not be negative.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="cost"/> is negative.</exception>
     protected EventDetail(DateTime dateStartTime, string title, decimal cost)
     {
         DateStartTime = dateStartTime;
         Title = title;
         Cost = cost;
-    }
-
-}
-
-public class FitnessActivity : EventDetail
-{
-    public string Location { get; set; }
-    public FitnessActivity(DateTime dateStartTime, string title, decimal cost, string location)
-         : base(dateStartTime, title, cost)
-    {
-        Location = location;
-    }
-    public override string ToString()
-    {
-        return $"Fitness event Date: {DateStartTime}, Title: {Title}, Cost: {Cost:C}, Location: {Location}";
-    }
-}
-
-public class EntertainmentActivity : EventDetail
-{
-    public int MinParticipants
-    {
-        get; set
-        {
-            if (value < 2) { throw new ArgumentException("Min participant is 2."); }
-            field = value;
-        }
-    }
-    public EntertainmentActivity(DateTime dateStartTime, string title, decimal cost, int minParticipants)
-         : base(dateStartTime, title, cost)
-    {
-        MinParticipants = minParticipants;
-    }
-
-
-    public override string ToString()
-    {
-        return $"Entertainment event Date: {DateStartTime}, Title: {Title}, Cost: {Cost:C}, Min Participant: {MinParticipants}";
-    }
-}
-
-
-
-// Map the property to fix the order when writting csv. 
-// CSVHelper: For a derived class, reflection usually lists the subclass's own properties before the inherited ones. 
-
-public sealed class FitnessActivityMap : ClassMap<FitnessActivity>
-{
-    public FitnessActivityMap()
-    {
-        Map(m => m.DateStartTime).Index(0).Name("DateStartTime").TypeConverterOption.Format("d/MM/yyyy H:mm");
-        Map(m => m.Title).Index(1).Name("Title");
-        Map(m => m.Cost).Index(2).Name("Cost");
-        Map(m => m.Location).Index(3).Name("Location");
-    }
-}
-
-public sealed class EntertainmentActivityMap : ClassMap<EntertainmentActivity>
-{
-    public EntertainmentActivityMap()
-    {
-        Map(m => m.DateStartTime).Index(0).Name("DateStartTime").TypeConverterOption.Format("d/MM/yyyy H:mm");
-        Map(m => m.Title).Index(1).Name("Title");
-        Map(m => m.Cost).Index(2).Name("Cost");
-        Map(m => m.MinParticipants).Index(3).Name("MinParticipants");
     }
 }
