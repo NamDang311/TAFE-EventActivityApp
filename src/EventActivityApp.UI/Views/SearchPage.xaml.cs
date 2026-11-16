@@ -43,16 +43,16 @@ namespace myapp.Views
 
                 if (DateFilterRadioBefore.IsChecked == true)
                 {
-                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.before, _repo.ReadAllCsv()));
+                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.before));
                 }
                 else if (DateFilterRadioOn.IsChecked == true)
                 {
-                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.on, _repo.ReadAllCsv()));
+                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.on));
                 }
                 else if (DateFilterRadioAfter.IsChecked == true
                 )
                 {
-                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.after, _repo.ReadAllCsv()));
+                    results.AddRange(_repo.SearchEvent(searchDate, SearchFilter.after));
                 }
 
 

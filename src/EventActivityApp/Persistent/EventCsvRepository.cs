@@ -1,32 +1,51 @@
 using CsvHelper;
 using CsvHelper.Configuration;
 using EventActivityApp.Domain;
-using Microsoft.VisualBasic;
-using System;
-using System.Diagnostics;
-using System.Dynamic;
 using System.Globalization;
 namespace EventActivityApp.Persistent;
 
 
+/// <summary>
+/// The kind of event, which also decides the CSV file it is stored in.
+/// </summary>
 public enum EventType
 {
+    /// <summary>No type selected.</summary>
     none,
+    /// <summary>A fitness event.</summary>
     fitness,
+    /// <summary>An entertainment event.</summary>
     entertainment,
 }
 
+/// <summary>
+/// How to compare event dates against a search date.
+/// </summary>
 public enum SearchFilter
 {
-    before, on, after
+    /// <summary>Events dated before the search date.</summary>
+    before,
+    /// <summary>Events dated on the search date.</summary>
+    on,
+    /// <summary>Events dated after the search date.</summary>
+    after
 }
 
-
+/// <summary>
+/// Reads, writes and searches events stored in CSV files.
+/// </summary>
 public class EventCsvRepository
 {
     private const string CsvDateFormat = "d/MM/yyyy H:mm";
 
     // public EventType CurrentType { get; set; }
+
+    /// <summary>
+    /// Gets the CSV file name for the given event type.
+    /// </summary>
+    /// <param name="type">The event type.</param>
+    /// <returns>The CSV file name.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when <paramref name="type"/> is <see cref="EventType.none"/>.</exception>
     private string GetFileName(EventType type) => type switch
     {
         EventType.fitness => "FitnessActivities.CSV",
@@ -34,8 +53,14 @@ public class EventCsvRepository
         _ => throw new InvalidOperationException("Set correct event type")
     };
 
+    /// <summary>
+    /// Gets or sets the folder that contains the CSV files.
+    /// </summary>
     public string DataFolder { get; set; } = GetPathToProjectFolder("Data");
 
+    /// <summary>
+    /// The full path of the CSV file used by the most recent read or write.
+    /// </summary>
     public string _filePath = "";
 
     /// <summary>
@@ -62,6 +87,11 @@ public class EventCsvRepository
         return results;
     }
 
+    /// <summary>
+    /// Reads every fitness and entertainment event from their CSV files.
+    /// </summary>
+    /// <returns>All events, fitness first, then entertainment.</returns>
+    /// <exception cref="FileNotFoundException">Thrown when either CSV file is missing.</exception>
     public List<EventDetail> ReadAllCsv()
     {
         var results = new List<EventDetail>();
@@ -70,12 +100,6 @@ public class EventCsvRepository
         return results;
     }
 
-    /// <summary>
-    /// Reads all records from a CSV file in the Data folder and maps each row to an event of type <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">The event type to create for each row (for example, <see cref="FitnessActivity"/> or <see cref="EntertainmentActivity"/>).</typeparam>
-    /// <param name="fileName">The name of the CSV file to read, such as "FitnessActivities.CSV".</param>
-    /// <returns>A list of the events read from the file.</returns>
     private List<T> ReadFile<T>(string fileName) where T : EventDetail
     {
         ;
@@ -98,6 +122,13 @@ public class EventCsvRepository
         }
     }
 
+    /// <summary>
+    /// Appends one event to the CSV file for the given event type, without writing a header row.
+    /// </summary>
+    /// <typeparam name="T">The event type being written.</typeparam>
+    /// <param name="record">The event to save.</param>
+    /// <param name="type">The event type, which decides the target file.</param>
+    /// <exception cref="InvalidOperationException">Thrown when <paramref name="type"/> is <see cref="EventType.none"/>.</exception>
     public void WriteCsv<T>(T record, EventType type) where T : EventDetail
     {
         _filePath = Path.Combine(DataFolder, GetFileName(type));
@@ -112,7 +143,7 @@ public class EventCsvRepository
             using (var csv = new CsvWriter(writer, config))
             {
                 csv.Context.TypeConverterOptionsCache.GetOptions<DateTime>().Formats = [CsvDateFormat];
-    csv.Context.RegisterClassMap<FitnessActivityMap>();
+                csv.Context.RegisterClassMap<FitnessActivityMap>();
                 csv.Context.RegisterClassMap<EntertainmentActivityMap>();
                 csv.WriteRecord(record);
                 csv.NextRecord();
@@ -123,9 +154,18 @@ public class EventCsvRepository
     }
 
 
-    public List<EventDetail> SearchEvent(DateTime searchDate, SearchFilter filter, List<EventDetail> data)
+    /// <summary>
+    /// Finds events whose start date is before, on or after the search date.
+    /// </summary>
+    /// <param name="searchDate">The date to compare against.</param>
+    /// <param name="filter">How to compare each event's date with <paramref name="searchDate"/>.</param>
+    /// <param name="data">The events to search. When <see langword="null"/>, all events are read from the CSV files.</param>
+    /// <returns>The matching events, newest first.</returns>
+    /// <exception cref="FileNotFoundException">Thrown when <paramref name="data"/> is null and a CSV file is missing.</exception>
+    public List<EventDetail> SearchEvent(DateTime searchDate, SearchFilter filter, List<EventDetail>? data = null)
     {
         var results = new List<EventDetail>();
+        if (data == null) { data = ReadAllCsv(); }
         foreach (var item in data)
         {
             DateTime eventDate = item.DateStartTime.Date;
@@ -147,11 +187,7 @@ public class EventCsvRepository
         return results.OrderByDescending(e => e.DateStartTime).ToList();
     }
 
-    /// <summary>
-    /// Ultils to get path to csv files
-    /// </summary>
-    /// <param name="folderName"></param>
-    /// <returns></returns>
+
     private static string GetPathToProjectFolder(string folderName)
     {
         // Get the base directory for the project.  This defaults to where the compiled code is

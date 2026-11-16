@@ -20,14 +20,14 @@ public class EventCsvRepositoryTest
     }
 
     [Fact]
-    private void FitnessMockFile_ShouldExist()
+    public void FitnessMockFile_ShouldExist()
     {
         string path = Path.Combine(_repo.DataFolder, "FitnessActivities.CSV");
         Assert.True(File.Exists(path));
     }
 
     [Fact]
-    private void EntertainmentMockFile_ShouldExist()
+    public void EntertainmentMockFile_ShouldExist()
     {
         string path = Path.Combine(_repo.DataFolder, "EntertainmentActivities.CSV");
         Assert.True(File.Exists(path));
@@ -53,7 +53,7 @@ public class EventCsvRepositoryTest
 
 
     [Fact]
-    private void CanReadFitnessEvents_ShouldReturnList()
+    public void CanReadFitnessEvents_ShouldReturnList()
     {
         var list = _repo.ReadCsv(EventType.fitness);
         Assert.Equal("FitnessActivities.CSV", Path.GetFileName(_repo._filePath));
@@ -63,7 +63,7 @@ public class EventCsvRepositoryTest
     }
 
     [Fact]
-    private void CanReadEntertainmentEvents_ShouldReturnList()
+    public void CanReadEntertainmentEvents_ShouldReturnList()
     {
 
         var list = _repo.ReadCsv(EventType.entertainment);
@@ -73,7 +73,7 @@ public class EventCsvRepositoryTest
     }
 
     [Fact]
-    private void CanSaveFitnessEvent_ShouldWriteToFile()
+    public void CanSaveFitnessEvent_ShouldWriteToFile()
     {
         string path = Path.Combine(_repo.DataFolder, "FitnessActivities.CSV");
         string original = File.ReadAllText(path);
