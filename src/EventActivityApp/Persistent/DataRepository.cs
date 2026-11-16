@@ -34,6 +34,5 @@ public enum SearchFilter
 /// </summary>
 public abstract class DataRepository
 {
-    public abstract bool CheckEventExists(DateTime date);
-    public abstract void WriteEvent(EventDetail e);
+ 
 }

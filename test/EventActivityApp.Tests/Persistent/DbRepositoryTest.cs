@@ -124,7 +124,7 @@ public class DbRepositoryTest
     [Theory]
     [InlineData("2025-03-01", SearchFilter.on, new string[] { "Walking" })]
     [InlineData("2025-03-08", SearchFilter.before, new string[] { "Walking", "Running" })]
-    [InlineData("2026-12-30", SearchFilter.after, new string[] { "Test Entertainment Event" })]
+    [InlineData("2026-11-09", SearchFilter.after, new string[] { "Running" })]
     public void SearchEvent_ReturnsEventsMatchingFilter(string dateTime, SearchFilter filter, string[] expected)
     {
         var searchDate = DateTime.Parse(dateTime);

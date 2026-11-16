@@ -11,7 +11,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
-	  <DocumentationFile>..\ActivitiesDocs.xml</DocumentationFile>
+	  <DocumentationFile>.\ActivitiesDocs.xml</DocumentationFile>
 	
   </PropertyGroup>
 

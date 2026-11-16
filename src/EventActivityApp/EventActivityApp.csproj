@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-	  <DocumentationFile>..\ActivitiesDocs.xml</DocumentationFile>
+	  <DocumentationFile>.\ActivitiesDocs.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

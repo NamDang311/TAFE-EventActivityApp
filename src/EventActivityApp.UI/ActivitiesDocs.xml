@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EventActivityApp.UI</name>
+    </assembly>
+    <members>
+        <member name="T:EventActivityApp.UI.App">
+            <summary>
+            Interaction logic for App.xaml
+            </summary>
+            <summary>
+            App
+            </summary>
+        </member>
+        <member name="M:EventActivityApp.UI.App.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="M:EventActivityApp.UI.App.Main">
+            <summary>
+            Application Entry Point.
+            </summary>
+        </member>
+        <member name="T:EventActivityApp.UI.MainWindow">
+            <summary>
+            Interaction logic for MainWindow.xaml
+            </summary>
+            <summary>
+            MainWindow
+            </summary>
+        </member>
+        <member name="M:EventActivityApp.UI.MainWindow.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:EventActivityApp.UI.MainWindow"/> class.
+            </summary>
+        </member>
+        <member name="M:EventActivityApp.UI.MainWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:EventActivityApp.UI.Views.AddPage">
+            <summary>
+            Interaction logic for AddPage.xaml
+            </summary>
+            <summary>
+            AddPage
+            </summary>
+        </member>
+        <member name="F:EventActivityApp.UI.Views.AddPage._repo">
+            <summary>
+            Provides access to the event CSV repository.
+            </summary>
+        </member>
+        <member name="M:EventActivityApp.UI.Views.AddPage.#ctor">
+            <summary>
+            Initializes a new instance of the AddPage class.
+            </summary>
+        </member>
+        <member name="M:EventActivityApp.UI.Views.AddPage.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:EventActivityApp.UI.Views.Home">
+            <summary>
+            Interaction logic for Home.xaml
+            </summary>
+            <summary>
+            Home
+            </summary>
+        </member>
+        <member name="M:EventActivityApp.UI.Views.Home.#ctor">
+            <summary>
+            Initializes a new instance of the Home class.
+            </summary>
+        </member>
+        <member name="M:EventActivityApp.UI.Views.Home.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:myapp.Views.SearchPage">
+            <summary>
+            Interaction logic for SearchPage.xaml
+            </summary>
+            <summary>
+            SearchPage
+            </summary>
+        </member>
+        <member name="F:myapp.Views.SearchPage._repo">
+            <summary>
+            Provides access to the event CSV repository.
+            </summary>
+        </member>
+        <member name="M:myapp.Views.SearchPage.#ctor">
+            <summary>
+            Initializes a new instance of the SearchPage class.
+            </summary>
+        </member>
+        <member name="M:myapp.Views.SearchPage.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+    </members>
+</doc>

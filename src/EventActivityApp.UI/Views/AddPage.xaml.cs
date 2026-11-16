@@ -4,8 +4,6 @@ using System.Windows.Controls;
 using EventActivityApp.Domain;
 using EventActivityApp.Persistent;
 
-
-
 namespace EventActivityApp.UI.Views
 {
     /// <summary>
@@ -17,10 +15,10 @@ namespace EventActivityApp.UI.Views
         /// <summary>
         /// Provides access to the event CSV repository.
         /// </summary>
-        public DataRepository _repo = new EventDbRepository();
+        public EventDbRepository _repo = new EventDbRepository();
 
         private DateTime? _confirmedPastDate;
-        
+
         /// <summary>
         /// Initializes a new instance of the AddPage class.
         /// </summary>
@@ -41,7 +39,7 @@ namespace EventActivityApp.UI.Views
             try
             {
                 // Check if there is an event on the selected date
-                if (_repo.CheckEventExists((DateTime)values[0]))
+                if (_repo.CheckEventExist((DateTime)values[0]))
                 {
                     ShowMsgBoxForReplacing(newEventDetail);
                 }
@@ -54,13 +52,7 @@ namespace EventActivityApp.UI.Views
                 }
 
             }
-            // catch (ArgumentException ex)
-            // {
-            //     MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            // }
 
-
-            // Catch everything else
             catch
             {
                 MessageBox.Show("Something went wrong", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -79,7 +71,7 @@ namespace EventActivityApp.UI.Views
             try
             {
                 // Check if there is an event on the selected date
-                if (_repo.CheckEventExists((DateTime)values[0]))
+                if (_repo.CheckEventExist((DateTime)values[0]))
                 {
 
                     ShowMsgBoxForReplacing(newEventDetail);
@@ -152,6 +144,19 @@ namespace EventActivityApp.UI.Views
             return false;
         }
 
+        private void ShowMsgBoxForReplacing(EventDetail record)
+        {
+            MessageBoxResult mb = MessageBox.Show($"There is already an existing event on the selected date. Do you want to replace the event?",
+                    "Unable to Save Event", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+            if (mb == MessageBoxResult.Yes)
+            {
+                _repo.UpdateEvent(record);
+                MessageBox.Show($"Event saved:\n" + $"{record}", "Event Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+
+        }
+
         private List<object> GetInputsData(EventType type)
         {
             DateTime dateValue = DateTextBox.SelectedDate!.Value;
@@ -168,8 +173,5 @@ namespace EventActivityApp.UI.Views
 
             return data;
         }
-
-
-
     }
 }
