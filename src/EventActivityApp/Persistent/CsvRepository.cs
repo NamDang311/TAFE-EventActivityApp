@@ -85,6 +85,7 @@ public class EventCsvRepository : DataRepository
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
             PrepareHeaderForMatch = args => args.Header.ToLower(),
+
         };
         using (var reader = new StreamReader(_filePath))
         using (var csv = new CsvReader(reader, config))

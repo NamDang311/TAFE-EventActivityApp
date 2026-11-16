@@ -1,5 +1,7 @@
 namespace EventActivityApp.Domain;
 
+using CsvHelper.Configuration.Attributes;
+
 /// <summary>
 /// Base class for all events, holding the details every event type shares.
 /// </summary>
@@ -8,6 +10,7 @@ public abstract class EventDetail
     /// <summary>
     /// Gets or sets the unique identifier of the activity associated with the event.
     /// </summary>
+    [Ignore]
     public int ActivityID { get; set; }
     /// <summary>
     /// Gets or sets the date and time the event starts.
