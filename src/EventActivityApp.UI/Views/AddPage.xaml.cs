@@ -1,10 +1,8 @@
-﻿using EventActivityApp.Persistent;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml.Linq;
-using MySqlConnector;
 using EventActivityApp.Domain;
+using EventActivityApp.Persistent;
 
 
 
@@ -19,9 +17,10 @@ namespace EventActivityApp.UI.Views
         /// <summary>
         /// Provides access to the event CSV repository.
         /// </summary>
-        public EventCsvRepository _repo = new EventCsvRepository();
-        
+        public DataRepository _repo = new EventDbRepository();
+
         private DateTime? _confirmedPastDate;
+        
         /// <summary>
         /// Initializes a new instance of the AddPage class.
         /// </summary>
@@ -42,7 +41,7 @@ namespace EventActivityApp.UI.Views
             try
             {
                 // Check if there is an event on the selected date
-                if (_repo.CheckEventExist((DateTime)values[0]))
+                if (_repo.CheckEventExists((DateTime)values[0]))
                 {
                     ShowMsgBoxForReplacing(newEventDetail);
                 }
@@ -80,7 +79,7 @@ namespace EventActivityApp.UI.Views
             try
             {
                 // Check if there is an event on the selected date
-                if (_repo.CheckEventExist((DateTime)values[0]))
+                if (_repo.CheckEventExists((DateTime)values[0]))
                 {
 
                     ShowMsgBoxForReplacing(newEventDetail);

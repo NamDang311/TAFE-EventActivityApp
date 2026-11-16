@@ -1,108 +1,259 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>EventActivityApp.UI</name>
+        <name>EventActivityApp</name>
     </assembly>
     <members>
-        <member name="T:EventActivityApp.UI.App">
+        <member name="T:EventActivityApp.Domain.EntertainmentActivity">
             <summary>
-            Interaction logic for App.xaml
-            </summary>
-            <summary>
-            App
+            An entertainment event that requires a minimum number of participants.
             </summary>
         </member>
-        <member name="M:EventActivityApp.UI.App.InitializeComponent">
+        <member name="P:EventActivityApp.Domain.EntertainmentActivity.MinParticipants">
             <summary>
-            InitializeComponent
+            Gets or sets the minimum number of participants needed for the event to go ahead.
+            </summary>
+            <exception cref="T:System.ArgumentException">Thrown when the value is less than 2.</exception>
+        </member>
+        <member name="M:EventActivityApp.Domain.EntertainmentActivity.#ctor(System.DateTime,System.String,System.Decimal,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:EventActivityApp.Domain.EntertainmentActivity"/> class.
+            </summary>
+            <param name="dateStartTime">The date and time the event starts.</param>
+            <param name="title">The title of the event.</param>
+            <param name="cost">The cost of the event. Must not be negative.</param>
+            <param name="minParticipants">The minimum number of participants. Must be at least 2.</param>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="cost"/> is negative or <paramref name="minParticipants"/> is less than 2.</exception>
+        </member>
+        <member name="M:EventActivityApp.Domain.EntertainmentActivity.ToString">
+            <summary>
+            Returns a readable summary of the entertainment event.
+            </summary>
+            <returns>A string containing the date, title, cost and minimum participants.</returns>
+        </member>
+        <member name="T:EventActivityApp.Domain.EventDetail">
+            <summary>
+            Base class for all events, holding the details every event type shares.
             </summary>
         </member>
-        <member name="M:EventActivityApp.UI.App.Main">
+        <member name="P:EventActivityApp.Domain.EventDetail.ActivityID">
             <summary>
-            Application Entry Point.
+            Gets or sets the unique identifier of the activity associated with the event.
             </summary>
         </member>
-        <member name="T:EventActivityApp.UI.MainWindow">
+        <member name="P:EventActivityApp.Domain.EventDetail.DateStartTime">
             <summary>
-            Interaction logic for MainWindow.xaml
-            </summary>
-            <summary>
-            MainWindow
+            Gets or sets the date and time the event starts.
             </summary>
         </member>
-        <member name="M:EventActivityApp.UI.MainWindow.#ctor">
+        <member name="P:EventActivityApp.Domain.EventDetail.Title">
             <summary>
-            Initializes a new instance of the <see cref="T:EventActivityApp.UI.MainWindow"/> class.
+            Gets or sets the title of the event.
             </summary>
         </member>
-        <member name="M:EventActivityApp.UI.MainWindow.InitializeComponent">
+        <member name="P:EventActivityApp.Domain.EventDetail.Cost">
             <summary>
-            InitializeComponent
+            Gets or sets the cost of the event.
+            </summary>
+            <exception cref="T:System.ArgumentException">Thrown when the value is negative.</exception>
+        </member>
+        <member name="M:EventActivityApp.Domain.EventDetail.#ctor(System.DateTime,System.String,System.Decimal)">
+            <summary>
+            Initializes a new instance of the <see cref="T:EventActivityApp.Domain.EventDetail"/> class.
+            </summary>
+            <param name="dateStartTime">The date and time the event starts.</param>
+            <param name="title">The title of the event.</param>
+            <param name="cost">The cost of the event. Must not be negative.</param>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="cost"/> is negative.</exception>
+        </member>
+        <member name="T:EventActivityApp.Domain.FitnessActivity">
+            <summary>
+            A fitness event that takes place at a specific location.
             </summary>
         </member>
-        <member name="T:EventActivityApp.UI.Views.AddPage">
+        <member name="P:EventActivityApp.Domain.FitnessActivity.Location">
             <summary>
-            Interaction logic for AddPage.xaml
-            </summary>
-            <summary>
-            AddPage
+            Gets or sets where the fitness event takes place.
             </summary>
         </member>
-        <member name="F:EventActivityApp.UI.Views.AddPage._repo">
+        <member name="M:EventActivityApp.Domain.FitnessActivity.#ctor(System.DateTime,System.String,System.Decimal,System.String)">
             <summary>
-            Provides access to the event CSV repository.
+            Initializes a new instance of the <see cref="T:EventActivityApp.Domain.FitnessActivity"/> class.
+            </summary>
+            <param name="dateStartTime">The date and time the event starts.</param>
+            <param name="title">The title of the event.</param>
+            <param name="cost">The cost of the event. Must not be negative.</param>
+            <param name="location">The location of the event.</param>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="cost"/> is negative.</exception>
+        </member>
+        <member name="M:EventActivityApp.Domain.FitnessActivity.ToString">
+            <summary>
+            Returns a readable summary of the fitness event.
+            </summary>
+            <returns>A string containing the date, title, cost and location.</returns>
+        </member>
+        <member name="M:EventActivityApp.Domain.FitnessActivityMap.#ctor">
+            <summary>
+            Initializes the map: DateStartTime, Title, Cost, Location.
             </summary>
         </member>
-        <member name="M:EventActivityApp.UI.Views.AddPage.#ctor">
+        <member name="M:EventActivityApp.Domain.EntertainmentActivityMap.#ctor">
             <summary>
-            Initializes a new instance of the AddPage class.
+            Initializes the map: DateStartTime, Title, Cost, MinParticipants.
             </summary>
         </member>
-        <member name="M:EventActivityApp.UI.Views.AddPage.InitializeComponent">
+        <member name="T:EventActivityApp.Persistent.EventCsvRepository">
             <summary>
-            InitializeComponent
+            Provides read and write access to fitness and entertainment events stored in CSV files.
+            Reads, appends and searches events by event type.
             </summary>
         </member>
-        <member name="T:EventActivityApp.UI.Views.Home">
+        <member name="M:EventActivityApp.Persistent.EventCsvRepository.GetFileName(EventActivityApp.Persistent.EventType)">
             <summary>
-            Interaction logic for Home.xaml
+            Gets the CSV file name for the given event type.
             </summary>
+            <param name="type">The event type.</param>
+            <returns>The CSV file name.</returns>
+            <exception cref="T:System.InvalidOperationException">Thrown when <paramref name="type"/> is <see cref="F:EventActivityApp.Persistent.EventType.none"/>.</exception>
+        </member>
+        <member name="P:EventActivityApp.Persistent.EventCsvRepository.DataFolder">
             <summary>
-            Home
+            Gets or sets the folder that contains the CSV files.
             </summary>
         </member>
-        <member name="M:EventActivityApp.UI.Views.Home.#ctor">
+        <member name="F:EventActivityApp.Persistent.EventCsvRepository._filePath">
             <summary>
-            Initializes a new instance of the Home class.
+            The full path of the CSV file used by the most recent read or write.
             </summary>
         </member>
-        <member name="M:EventActivityApp.UI.Views.Home.InitializeComponent">
+        <member name="M:EventActivityApp.Persistent.EventCsvRepository.ReadCsv(EventActivityApp.Persistent.EventType)">
             <summary>
-            InitializeComponent
+            Reads event details from CSV files based on the specified event type.
+            </summary>
+            <param name="type">The event type to filter by. Supported values are "fitness", "entertainment", or null for all types.</param>
+            <returns>A list of event details read from the corresponding CSV files.</returns>
+        </member>
+        <member name="M:EventActivityApp.Persistent.EventCsvRepository.ReadAllCsv">
+            <summary>
+            Reads every fitness and entertainment event from their CSV files.
+            </summary>
+            <returns>All events, fitness first, then entertainment.</returns>
+            <exception cref="T:System.IO.FileNotFoundException">Thrown when either CSV file is missing.</exception>
+        </member>
+        <member name="M:EventActivityApp.Persistent.EventCsvRepository.WriteCsv``1(``0,EventActivityApp.Persistent.EventType)">
+            <summary>
+            Appends one event to the CSV file for the given event type, without writing a header row.
+            </summary>
+            <typeparam name="T">The event type being written.</typeparam>
+            <param name="record">The event to save.</param>
+            <param name="type">The event type, which decides the target file.</param>
+            <exception cref="T:System.InvalidOperationException">Thrown when <paramref name="type"/> is <see cref="F:EventActivityApp.Persistent.EventType.none"/>.</exception>
+        </member>
+        <member name="M:EventActivityApp.Persistent.EventCsvRepository.SearchEvent(System.DateTime,EventActivityApp.Persistent.SearchFilter,System.Collections.Generic.List{EventActivityApp.Domain.EventDetail})">
+            <summary>
+            Finds events whose start date is before, on or after the search date.
+            </summary>
+            <param name="searchDate">The date to compare against.</param>
+            <param name="filter">How to compare each event's date with <paramref name="searchDate"/>.</param>
+            <param name="data">The events to search. When <see langword="null"/>, all events are read from the CSV files.</param>
+            <returns>The matching events, newest first.</returns>
+            <exception cref="T:System.IO.FileNotFoundException">Thrown when <paramref name="data"/> is null and a CSV file is missing.</exception>
+        </member>
+        <member name="T:EventActivityApp.Persistent.EventType">
+            <summary>
+            The kind of event, which also decides the CSV file it is stored in.
             </summary>
         </member>
-        <member name="T:myapp.Views.SearchPage">
+        <member name="F:EventActivityApp.Persistent.EventType.none">
+            <summary>No type selected.</summary>
+        </member>
+        <member name="F:EventActivityApp.Persistent.EventType.fitness">
+            <summary>A fitness event.</summary>
+        </member>
+        <member name="F:EventActivityApp.Persistent.EventType.entertainment">
+            <summary>An entertainment event.</summary>
+        </member>
+        <member name="T:EventActivityApp.Persistent.SearchFilter">
             <summary>
-            Interaction logic for SearchPage.xaml
-            </summary>
-            <summary>
-            SearchPage
+            How to compare event dates against a search date.
             </summary>
         </member>
-        <member name="F:myapp.Views.SearchPage._repo">
+        <member name="F:EventActivityApp.Persistent.SearchFilter.before">
+            <summary>Events dated before the search date.</summary>
+        </member>
+        <member name="F:EventActivityApp.Persistent.SearchFilter.on">
+            <summary>Events dated on the search date.</summary>
+        </member>
+        <member name="F:EventActivityApp.Persistent.SearchFilter.after">
+            <summary>Events dated after the search date.</summary>
+        </member>
+        <member name="T:EventActivityApp.Persistent.DataRepository">
             <summary>
-            Provides access to the event CSV repository.
+            Base class for data repositories
             </summary>
         </member>
-        <member name="M:myapp.Views.SearchPage.#ctor">
+        <member name="T:EventActivityApp.Persistent.EventDbRepository">
             <summary>
-            Initializes a new instance of the SearchPage class.
+            Provides data access operations for events using stored procedures
+            against the underlying database.
             </summary>
         </member>
-        <member name="M:myapp.Views.SearchPage.InitializeComponent">
+        <member name="F:EventActivityApp.Persistent.EventDbRepository.Db">
             <summary>
-            InitializeComponent
+            Database helper used to open connections and execute commands.
             </summary>
+        </member>
+        <member name="M:EventActivityApp.Persistent.EventDbRepository.ReadActivitiesbyType(EventActivityApp.Persistent.EventType)">
+            <summary>
+            Reads all activities of the specified <paramref name="type"/>.
+            </summary>
+            <param name="type">The event type to filter by.</param>
+            <returns>A list of activities matching the requested type.</returns>
+            <exception cref="T:System.InvalidOperationException">Thrown when the event type is not supported.</exception>
+        </member>
+        <member name="M:EventActivityApp.Persistent.EventDbRepository.ReadAllActivities">
+            <summary>
+            Reads all activities of every type, mapping each row to a
+            <see cref="T:EventActivityApp.Domain.FitnessActivity"/> or <see cref="T:EventActivityApp.Domain.EntertainmentActivity"/>.
+            </summary>
+            <returns>A list of all activities.</returns>
+            <exception cref="T:System.InvalidOperationException">Thrown when a row has an unknown activity type.</exception>
+        </member>
+        <member name="M:EventActivityApp.Persistent.EventDbRepository.WriteEvent(EventActivityApp.Domain.EventDetail)">
+            <summary>
+            Inserts a new activity using the stored procedure that matches its type.
+            </summary>
+            <param name="record">The fitness or entertainment activity to save.</param>
+            <exception cref="T:System.InvalidOperationException">Thrown when the activity type is not supported.</exception>
+        </member>
+        <member name="M:EventActivityApp.Persistent.EventDbRepository.CheckEventExist(System.DateTime)">
+            <summary>
+            Checks whether an activity already exists on the given date.
+            </summary>
+            <param name="date">The date to check; the time portion is ignored.</param>
+            <returns><c>true</c> if an activity exists on that date; otherwise <c>false</c>.</returns>
+        </member>
+        <member name="M:EventActivityApp.Persistent.EventDbRepository.UpdateEvent(EventActivityApp.Domain.EventDetail)">
+            <summary>
+            Updates the activity scheduled on the same date as <paramref name="record"/>.
+            Nothing is changed unless exactly one activity exists on that date.
+            </summary>
+            <param name="record">The new values for the activity.</param>
+            <exception cref="T:System.InvalidOperationException">Thrown when the activity type is not supported.</exception>
+        </member>
+        <member name="M:EventActivityApp.Persistent.EventDbRepository.SearchEvent(System.DateTime,EventActivityApp.Persistent.SearchFilter)">
+            <summary>
+            Searches activities relative to a date using the specified filter.
+            </summary>
+            <param name="searchDate">The reference date; the time portion is ignored.</param>
+            <param name="filter">The comparison to apply (for example on, before or after).</param>
+            <returns>Matching activities, ordered by start time descending.</returns>
+        </member>
+        <member name="M:EventActivityApp.Persistent.EventDbRepository.DeleteActivityById(System.Int32)">
+            <summary>
+            Deletes an activity and its type-specific rows by identifier.
+            </summary>
+            <param name="id">The activity identifier.</param>
         </member>
     </members>
 </doc>
