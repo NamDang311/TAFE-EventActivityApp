@@ -76,29 +76,28 @@ public class EntertainmentActivity : EventDetail
 }
 
 
-/** No longer need after migrated to DB*/
-// /* 
+
 // Map the property to fix the order when writting csv. 
 // CSVHelper: For a derived class, reflection usually lists the subclass's own properties before the inherited ones. 
-// */
-// public sealed class FitnessActivityMap : ClassMap<FitnessActivity>
-// {
-//     public FitnessActivityMap()
-//     {
-//         Map(m => m.DateStartTime).Index(0).Name("DateStartTime").TypeConverterOption.Format("d/MM/yyyy H:mm");
-//         Map(m => m.Title).Index(1).Name("Title");
-//         Map(m => m.Cost).Index(2).Name("Cost");
-//         Map(m => m.Location).Index(3).Name("Location");
-//     }
-// }
 
-// public sealed class EntertainmentActivityMap : ClassMap<EntertainmentActivity>
-// {
-//     public EntertainmentActivityMap()
-//     {
-//         Map(m => m.DateStartTime).Index(0).Name("DateStartTime").TypeConverterOption.Format("d/MM/yyyy H:mm");
-//         Map(m => m.Title).Index(1).Name("Title");
-//         Map(m => m.Cost).Index(2).Name("Cost");
-//         Map(m => m.MinParticipants).Index(3).Name("MinParticipants");
-//     }
-// }
+public sealed class FitnessActivityMap : ClassMap<FitnessActivity>
+{
+    public FitnessActivityMap()
+    {
+        Map(m => m.DateStartTime).Index(0).Name("DateStartTime").TypeConverterOption.Format("d/MM/yyyy H:mm");
+        Map(m => m.Title).Index(1).Name("Title");
+        Map(m => m.Cost).Index(2).Name("Cost");
+        Map(m => m.Location).Index(3).Name("Location");
+    }
+}
+
+public sealed class EntertainmentActivityMap : ClassMap<EntertainmentActivity>
+{
+    public EntertainmentActivityMap()
+    {
+        Map(m => m.DateStartTime).Index(0).Name("DateStartTime").TypeConverterOption.Format("d/MM/yyyy H:mm");
+        Map(m => m.Title).Index(1).Name("Title");
+        Map(m => m.Cost).Index(2).Name("Cost");
+        Map(m => m.MinParticipants).Index(3).Name("MinParticipants");
+    }
+}

@@ -16,7 +16,7 @@ namespace myapp.Views
         /// <summary>
         /// Provides access to the event CSV repository.
         /// </summary>
-        public DbRepository _repo = new DbRepository();
+        public EventDbRepository _repo = new EventDbRepository();
 
         /// <summary>
         /// Initializes a new instance of the SearchPage class.

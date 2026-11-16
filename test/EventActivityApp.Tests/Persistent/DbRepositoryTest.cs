@@ -8,11 +8,11 @@ using Xunit.Abstractions;
 
 namespace EventActivityApp.Persistent;
 
-// TODO: Db as a subclass
+
 public class DbRepositoryTest
 {
     // private readonly string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-    private readonly DbRepository _repo = new DbRepository();
+    private readonly EventDbRepository _repo = new EventDbRepository();
     private readonly Db db = new Db();
     private readonly ITestOutputHelper _output;
 
